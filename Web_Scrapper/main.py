@@ -15,11 +15,23 @@ def scrape_page(driver):
 
     for entry in review_entries:
         user = entry.find_element(By.CLASS_NAME,"ReviewerProfile__name").text
-        #rating = entry.find_element(By.CLASS_NAME,"RatingStars RatingStars__small").text
+
+        rating_element = entry.find_element(By.CSS_SELECTOR, "span.RatingStars")
+        rating = int(rating_element.get_attribute("aria-label").split()[1])
+
         comment = entry.find_element(By.CLASS_NAME,"ReviewText").text
-        #date = entry.find_element(By.CLASS_NAME,"Text Text__body3").text
-        likes = entry.find_element(By.CLASS_NAME,"Button__labelItem").text
-        reviews.append({"user": user,"comment": comment,"likes": likes})
+        
+        date = entry.find_element(By.XPATH,'.//span[contains(@class,"Text__body3")]/a').text
+     
+        likes = entry.find_element(By.XPATH,'.//span[contains(@class, "Button__labelItem") and contains(normalize-space(.), "like")]').text
+        
+        reviews.append({
+            "user": user,
+            "rating": rating,
+            "comment": comment,
+            "date": date,
+            "likes": likes
+        })
     
     return reviews
 
@@ -27,11 +39,6 @@ def load_next_page(driver):
     # Click Load More Reviews button
     button = driver.find_element(By.CSS_SELECTOR,"[data-testid='loadMore']")
     button.click()
-
-    # # Wait for element to be clickable
-    # element = WebDriverWait(driver,10).until(
-    #     EC.element_to_be_clickable(By.CSS_SELECTOR,"[data-testid='loadMore']")
-    # )
 
 def write_to_file(reviews,filename):
     pass
@@ -54,7 +61,7 @@ def main():
     
     # loop through review pages, scrape data, append, and click button for more reviews
     for page in range(0,NUM_PAGES):
-        all_reviews.append(scrape_page(driver))
+        all_reviews.extend(scrape_page(driver))
         load_next_page(driver)
         time.sleep(TIME_SLEEP)
 
