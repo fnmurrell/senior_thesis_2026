@@ -5,13 +5,18 @@ The primary objective of this project is to evaluate whether contemporary reader
 ## File Structure -- TO DO
 ## Developer Setup -- TO DO
 1. Create new venv in project root
+
 Name the directory "venv".
 (venv documentation)[https://docs.python.org/3/library/venv.html]
+
 2. Source venv
 Run this command.
 `source venv/bin/activate`
+
 3. Install requirements
 `pip install -r requirements.txt`
+
 ## Package Update or Addition
 If you update a package or add a new one, please update the requirements.txt file by runnning the following command: `pip freeze > requirements.txt`
+
 ## How to Use -- TO DO

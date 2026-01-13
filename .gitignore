@@ -1,2 +1,4 @@
 venv
 goodreads_reviews.json
+goodreads_eng_only_reviews.json
+*__pycache__

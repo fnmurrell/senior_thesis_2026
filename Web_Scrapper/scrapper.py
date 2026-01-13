@@ -55,7 +55,8 @@ OUTPUT_FILE = "goodreads_reviews.json"
 TIME_SLEEP = 5
 URL = "https://www.goodreads.com/book/show/46787/reviews?reviewFilters=eyJhZnRlciI6Ik9UTXdOeXd4TlRRME16RTNPVFEyTWpReiJ9"
 
-def main():
+def scrape_reviews():
+    print("[Scrapper]: Scrapping data from GoodReads")
     #  Setup the drive
     driver = webdriver.Firefox()
     driver.get(URL)
@@ -80,6 +81,3 @@ def main():
 
     # Generate final dataset
     write_to_file(final_reviews,OUTPUT_FILE)
-
-if __name__ == "__main__":
-    main()
