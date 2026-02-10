@@ -6,6 +6,8 @@ The primary objective of this project is to evaluate whether contemporary reader
 ## Developer Setup -- TO DO
 1. Create new venv in project root
 
+Run this command: 'python -m venv venv'
+
 Name the directory "venv".
 (venv documentation)[https://docs.python.org/3/library/venv.html]
 
@@ -15,6 +17,9 @@ Run this command.
 
 3. Install requirements
 `pip install -r requirements.txt`
+
+4. Update .gitignore file
+For any dataset or temporary file, do not commit those to the repository. Add those to .gitigore. 
 
 ## Package Update or Addition
 If you update a package or add a new one, please update the requirements.txt file by runnning the following command: `pip freeze > requirements.txt`

@@ -1,5 +1,6 @@
 from Data_Preprocessing.preprocessor_english_reviews import preprocessor_find_english_reviews
 from Data_Preprocessing.preprocessor_general import preprocessor_general
+from Data_Preprocessing.preprocessor_datachecks import preprocessor_datachecks
 from Web_Scrapper.scrapper import scrape_reviews
 import json
 import pandas as pd
@@ -18,6 +19,10 @@ def main():
     if(not os.path.exists("goodreads_eng_only_reviews.json")):
         preprocessor_find_english_reviews()
 
+    # Run the Pre-Processor for data quality 
+    if(not os.path.exists("goodreads_checked_reviews.json")):
+        preprocessor_datachecks()
+    
     # Run the rest of Pre-Processing
     preprocessor_general()
 
