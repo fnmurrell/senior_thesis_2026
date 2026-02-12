@@ -29,8 +29,13 @@ If you update a package or add a new one, please update the requirements.txt fil
 
 ## How to Use -- TO DO
 
+# Technical Documentation -- TO DO
 
-## Helper Code
+- flow chart of the project and code files (in progress)
+- basic database design/diagram 
+- general architecture diagram (in progress)
+
+# Helper Code
 The below code segment will identify any reviews with non-ASCII characters. You can use the function to check for successful non-ASCII removal as well. 
 
 I need to include this code in my data preprocessing files. 

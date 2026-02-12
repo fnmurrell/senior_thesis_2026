@@ -1,4 +1,6 @@
 import pandas as pd
+import re
+import string
 
 def preprocessor_general():
     print("[Pre-Processor]: Read in quality checked reviews.")
@@ -18,12 +20,10 @@ def preprocessor_general():
     # Remove URLs, HTML artifacts, and platform-generated text if present
     print("[Pre-Processor]: Remove URLs, HTML artifacts, web-generated text.")
 
-    import re
     reviews['comment'] = reviews['comment'].apply(lambda x: re.split('https:\/\/.*', str(x))[0])
 
     # Remove punctuation
     print("[Pre-Processor]: Remove punctuation from review comments.")
-    import string
 
     # Create a translation table to remove all punctuation 
     # The str.maketrans function maps all punctuation characters to None
