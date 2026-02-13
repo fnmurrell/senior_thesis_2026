@@ -5,7 +5,7 @@ import string
 def preprocessor_general():
     print("[Pre-Processor]: Read in quality checked reviews.")
 
-    reviews = pd.read_json("goodreads_cleaned_reviews.json")
+    reviews = pd.read_json("goodreads_checked_reviews.json")
 
     # Change all likes to integers
     print("[Pre-Processor]: Separate number of likes into separate column.")
@@ -47,7 +47,7 @@ def preprocessor_general():
     reviews.insert(3, "review_char_count", reviews["comment"].str.len(), True)
     reviews.insert(4, "review_word_count", reviews["comment"].str.split().str.len(), True)
 
-    # Saving language to JSON.
+    # Saving preprocessed dataset to JSON.
     preprocessed_reviews = reviews.to_json("goodreads_cleaned_reviews.json", orient="records") 
     
     return preprocessed_reviews

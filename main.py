@@ -1,6 +1,7 @@
 from Data_Preprocessing.preprocessor_english_reviews import preprocessor_find_english_reviews
 from Data_Preprocessing.preprocessor_general import preprocessor_general
 from Data_Preprocessing.preprocessor_datachecks import preprocessor_datachecks
+from Data_Preprocessing.preprocessor_tokenize import preprocessor_tokenize
 from Web_Scrapper.scrapper import scrape_reviews
 import json
 import pandas as pd
@@ -24,7 +25,11 @@ def main():
         preprocessor_datachecks()
     
     # Run the rest of Pre-Processing
-    preprocessor_general()
+    if(not os.path.exists("goodreads_cleaned_reviews.json")):
+        preprocessor_general()
+
+    # Run the final NLTK Pre-Processing
+    preprocessor_tokenize()
 
 if __name__ == "__main__":
     main()

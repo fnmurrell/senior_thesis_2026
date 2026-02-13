@@ -30,7 +30,7 @@ def preprocessor_datachecks():
     no_like = reviews[reviews['likes'].isna()]
     print(no_date.count())
 
-    # Saving language to JSON.
+    # Saving checked dataset to JSON.
     checked_reviews = reviews.to_json("goodreads_checked_reviews.json", orient="records") 
     
     return checked_reviews
