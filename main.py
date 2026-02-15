@@ -3,6 +3,7 @@ from Data_Preprocessing.preprocessor_general import preprocessor_general
 from Data_Preprocessing.preprocessor_datachecks import preprocessor_datachecks
 from Data_Preprocessing.preprocessor_tokenize import preprocessor_tokenize
 from Web_Scrapper.scrapper import scrape_reviews
+from EDA.exploratory_data_analysis import eda_processor
 import json
 import pandas as pd
 import os
@@ -29,7 +30,11 @@ def main():
         preprocessor_general()
 
     # Run the final NLTK Pre-Processing
-    preprocessor_tokenize()
+    if(not os.path.exists("goodreads_final_reviews.json")):
+        preprocessor_tokenize()
+
+    # Run exploratory data analysis
+    eda_processor()
 
 if __name__ == "__main__":
     main()
