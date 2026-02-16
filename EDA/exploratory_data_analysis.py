@@ -94,29 +94,50 @@ print("[EDA]: ")
 # Distribution of review lengths - word count
 print("[EDA]: Distribution of review lengths by word count.")
 
-plt.hist(reviews['review_word_count'], bins=30, color='green', edgecolor='black')
-plt.title('Distribution of Review Word Count')
-plt.xlabel('Word Count')
-plt.ylabel('Frequency')
-plt.show()
+fig, ax = plt.subplots(figsize=(10, 6))
+
+ax.hist(reviews['review_word_count'], bins=30, 
+        color='green', edgecolor='black')
+
+ax.set_title('Distribution of Review Word Count')
+ax.set_xlabel('Word Count')
+ax.set_ylabel('Frequency')
+
+fig.tight_layout()
+
+save_plot(fig, "review_word_count_distribution")
 
 # Distribution of review lengths - character count
 print("[EDA]: Distribution of review lengths by character count.")
 
-plt.hist(reviews['review_char_count'], bins=30, color='blue', edgecolor='black')
-plt.title('Distribution of Review Character Count')
-plt.xlabel('Character Count')
-plt.ylabel('Frequency')
-plt.show()
+fig, ax = plt.subplots(figsize=(10, 6))
+
+ax.hist(reviews['review_char_count'], bins=30, 
+        color='blue', edgecolor='black')
+
+ax.set_title('Distribution of Review Character Count')
+ax.set_xlabel('Character Count')
+ax.set_ylabel('Frequency')
+
+fig.tight_layout()
+
+save_plot(fig, "review_char_count_distribution")
 
 # Distribution of number of likes
 print("[EDA]: Distribution of number of likes.")
 
-plt.hist(reviews['numLikes'], bins=30, color='red', edgecolor='black')
-plt.title('Distribution of Likes')
-plt.xlabel('Likes')
-plt.ylabel('Frequency')
-plt.show()
+fig, ax = plt.subplots(figsize=(10, 6))
+
+ax.hist(reviews['numLikes'], bins=10, 
+        color='red', edgecolor='black')
+
+ax.set_title('Distribution of Likes')
+ax.set_xlabel('Likes')
+ax.set_ylabel('Frequency')
+
+fig.tight_layout()
+
+save_plot(fig, "likes_distribution")
 
 # word frequency plots 
 print("[EDA]: 50 most frequent words in user reviews.")
