@@ -27,7 +27,7 @@ def preprocessor_tokenize():
     # remove stopwords from review text using NLTK
     print("[Pre-Processor]: Remove stopwords from review text.")
     stop_words = set(stopwords.words('english'))
-    words_to_keep = {'no'}
+    words_to_keep = {'no','not','never'}
     custom_stopwords = set(stop_words - words_to_keep)
 
     reviews['tokenized_comment'] = reviews['tokenized_comment'].apply(lambda words: [word for word in words if word not in custom_stopwords])
