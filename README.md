@@ -3,6 +3,11 @@ The primary objective of this project is to evaluate whether contemporary reader
 
 # Technical Design
 ## File Structure -- TO DO
+
+- Web_Scrapper 
+- Data_Preprocessing
+- EDA
+
 ## Developer Setup -- TO DO
 1. Create new venv in project root
 
@@ -31,7 +36,8 @@ If you update a package or add a new one, please update the requirements.txt fil
 
 # Technical Documentation -- TO DO
 
-- flow chart of the project and code files (in progress)
+- flow chart of the project and code files (in progress) 
+    - [Data Preprocessing](https://lucid.app/lucidchart/f310201e-f864-46a6-92d9-8a8ebd36b904/edit?viewport_loc=92%2C288%2C2746%2C1612%2C0_0&invitationId=inv_5388a2d9-5537-494e-8ccd-29625634e9c1)
 - basic database design/diagram 
 - general architecture diagram (in progress)
 

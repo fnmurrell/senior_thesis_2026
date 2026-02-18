@@ -5,7 +5,6 @@ def preprocessor_datachecks():
 
     reviews = pd.read_json("goodreads_eng_only_reviews.json")
     reviews = reviews.drop('language', axis=1)
-    reviews.isnull().sum()
     
     # Count reviews with rating = None
     no_rating = reviews[reviews['rating'].isna()]
