@@ -11,6 +11,7 @@ def preprocessor_general():
     print("[Pre-Processor]: Separate number of likes into separate column.")
 
     reviews[['numLikes', 'likes']] = reviews['likes'].str.split(' ', expand=True)
+    reviews['numLikes'] = reviews['numLikes'].fillna(0).astype(int)
 
     # Convert the 'comment' column to lowercase
     print("[Pre-Processor]: Lowercase the review comments.")

@@ -51,10 +51,13 @@ def preprocessor_tokenize():
 
     def lemmatize_tokens(tokens):
         pos_tags = pos_tag(tokens)
-        return [
-            lemmatizer.lemmatize(word, get_wordnet_pos(tag))
+        lemmatized = [
+            lemmatizer.lemmatize(word, get_wordnet_pos(tag)) 
             for word, tag in pos_tags
         ]
+        # Return both lemmatized tokens and POS tags
+        # Format: [('lemma', 'POS'), ...]
+        return [(lemma, tag) for lemma, (_, tag) in zip(lemmatized, pos_tags)]
 
     reviews['lemmatized_comment'] = reviews['tokenized_comment'].apply(lemmatize_tokens)
 
