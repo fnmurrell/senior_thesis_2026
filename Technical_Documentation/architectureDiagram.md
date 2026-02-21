@@ -5,13 +5,12 @@ Used selenium library for webscrapping Goodreads book reviews.
 
 ## Data Preprocessing
 Used pandas, re, and string for data quality checks and general preprocessing and cleansing. 
-
 Used langdetect to identify non-English book reviews. 
-
 Used nltk for normalization, tokenization, and lemmatization.
 
-## Exploratory Data Analysis (EDA) -- TO DO 
-
+## Exploratory Data Analysis (EDA)
+Used collections and datetime for data transformations. 
+Used matplotlib, wordcloud, and seaborn for data visualizations. 
 
 ## Topic Modeling -- TO DO
 gensim for topic modeling
