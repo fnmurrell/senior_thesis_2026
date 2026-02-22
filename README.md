@@ -7,6 +7,9 @@ The primary objective of this project is to evaluate whether contemporary reader
 - Web_Scrapper 
 - Data_Preprocessing
 - EDA
+- Sentiment_Analysis
+- Technical_Documentation
+- Topic_Modeling
 
 ## Developer Setup -- TO DO
 1. Create new venv in project root
