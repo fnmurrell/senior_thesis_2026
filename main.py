@@ -4,6 +4,8 @@ from Data_Preprocessing.preprocessor_datachecks import preprocessor_datachecks
 from Data_Preprocessing.preprocessor_tokenize import preprocessor_tokenize
 from Web_Scrapper.scrapper import scrape_reviews
 from EDA.exploratory_data_analysis import eda_processor
+from Sentiment_Analysis.vader_analysis import vader_analysis
+from Sentiment_Analysis.vader_visualizations import vader_visualizer
 import json
 import pandas as pd
 import os
@@ -34,7 +36,14 @@ def main():
         preprocessor_tokenize()
 
     # Run exploratory data analysis
-    eda_processor()
+    #eda_processor()
+
+    # Run VADER sentiment analysis
+    if(not os.path.exists("VADER_reviews.json")):
+        vader_analysis()
+    
+    # Run VADER visualizations
+    vader_visualizer()
 
 if __name__ == "__main__":
     main()

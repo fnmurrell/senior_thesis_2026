@@ -4,5 +4,6 @@ goodreads_eng_only_reviews.json
 goodreads_checked_reviews.json
 goodreads_cleaned_reviews.json
 goodreads_final_reviews.json
+VADER_reviews.json
 JSON.py
 *__pycache__
