@@ -43,7 +43,11 @@ def main():
         vader_analysis()
     
     # Run VADER visualizations
-    vader_visualizer()
+    #vader_visualizer()
+
+    # Run RoBERTa sentiment analysis
+
+    # Run RoBERTa visualizations
 
 if __name__ == "__main__":
     main()

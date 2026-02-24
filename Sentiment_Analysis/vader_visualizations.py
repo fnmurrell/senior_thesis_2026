@@ -1,70 +1,83 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
-from datetime import datetime
-
-# Set your base folder once
-BASE_FOLDER = "/home/faith/Documents/Senior_Thesis_2026/Sentinment_Analysis/plots"
-os.makedirs(BASE_FOLDER, exist_ok=True)
-
-def save_plot(fig, filename, 
-              folder=BASE_FOLDER, 
-              filetype="png", 
-              dpi=300, 
-              add_timestamp=False):
-    """
-    Save a matplotlib figure cleanly and consistently.
-    
-    Parameters:
-        fig        : matplotlib figure object
-        filename   : base filename (no extension)
-        folder     : save directory
-        filetype   : 'png', 'pdf', 'svg', etc.
-        dpi        : resolution (ignored for pdf/svg)
-        add_timestamp : add datetime to filename
-    """
-    
-    if add_timestamp:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{filename}_{timestamp}"
-    
-    filepath = os.path.join(folder, f"{filename}.{filetype}")
-    
-    fig.savefig(filepath, dpi=dpi, bbox_inches="tight")
-    plt.close(fig)
-    
-    print(f"Saved: {filepath}")
+import seaborn as sns
+import numpy as np
 
 def vader_visualizer():
     print("[VADER]: Read in predicted sentiments by VADER methodology.")
     reviews = pd.read_json("VADER_reviews.json")
 
-    # Plot sentiment over time 
     # Convert the date column to datetime values
     reviews['date'] = pd.to_datetime(reviews['date'])
-
-    # Make date the index of the DataFrame
     reviews = reviews.set_index('date')
 
-    # Group by month and generate plot
-    reviews.resample('ME')['VADER_compound'].mean().plot(
-        title="Review Sentiment by Month")
+    # Group by month and generate sentiment over time plot
+    print("[VADER]: See sentiment over time by month.")
+    monthly_sentiment = reviews.resample('ME')['VADER_compound'].mean()
+
+    plt.figure(figsize=(10, 5))
+    monthly_sentiment.plot()
+    plt.title("Average Review Sentiment by Month")
+    plt.ylabel("Mean Compound Score")
+    plt.axhline(0, color='black', linewidth=1)
+    plt.tight_layout()
+
+    plt.savefig("/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_review_sentiment_by_month.png", bbox_inches="tight", pad_inches=0.5)
+    plt.close()
     
-    # Group by year and generate plot
-    reviews.resample('YE')['VADER_compound'].mean().plot(
-        title="Review Sentiment by Year")
+    # Group by year and generate sentiment over plot
+    print("[VADER]: See sentiment over time by year.")
+    yearly_sentiment = reviews.resample('YE')['VADER_compound'].mean()
 
-    # Sentiment Plot
-    ax = reviews['VADER_compound'].plot(
-        x='sentence_number', 
-        y='VADER_compound', 
-        kind='line',
-        figsize=(10,5), 
-        rot=90, 
-        title='Sentiment in Goodreads Book Reviews')
+    plt.figure(figsize=(10, 5))
+    yearly_sentiment.plot()
+    plt.title("Average Review Sentiment by Year")
+    plt.ylabel("Mean Compound Score")
+    plt.axhline(0, color='black', linewidth=1)
+    plt.tight_layout()
 
-    # Plot a horizontal line at 0
-    plt.axhline(y=0, color='orange', linestyle='-')
-    plt.show()
+    plt.savefig("/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_review_sentiment_by_year.png", bbox_inches="tight", pad_inches=0.5)
+    plt.close()
+    reviews = reviews.reset_index()
+
+    # Create density plot by sentiment label
+    print("[VADER]: Create density plot by sentiment label.")
+    plt.figure(figsize=(12, 8))
+
+    sns.kdeplot(data=reviews, x="VADER_compound", hue="VADER_label", fill=True, common_norm=False)
+
+    plt.title("Distribution of VADER Compound Scores")
+    plt.xlabel("Compound Sentiment Score")
+    plt.ylabel("Density")
+    plt.tight_layout()
+    plt.savefig(f"/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_compound_density.png", bbox_inches="tight", pad_inches=0.5, dpi=300)
+    plt.close()
+
+    # Boxplot: Sentiment by Star Rating
+    print("[VADER]: Create boxplot of sentiment by star rating.")
+    plt.figure(figsize=(8, 6))
+
+    sns.boxplot(x="rating", y="VADER_compound", data=reviews)
+
+    plt.title("Sentiment Distribution by Star Rating")
+    plt.xlabel("Star Rating")
+    plt.ylabel("Compound Sentiment Score")
+    plt.axhline(0, color="black", linewidth=1)
+    plt.tight_layout()
+    plt.savefig(f"/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_sentiment_by_star_rating_boxplot.png", bbox_inches="tight", pad_inches=0.5, dpi=300)
+    plt.close()
+
+    # Regression plot
+    print("[VADER]: Create regression plot of star rating to sentiment label.")
+    plt.figure(figsize=(8, 6))
+
+    sns.regplot(x="rating", y="VADER_compound", data=reviews)
+
+    plt.title("Star Rating vs. VADER Sentiment")
+    plt.xlabel("Star Rating")
+    plt.ylabel("Compound Sentiment Score")
+    plt.tight_layout()
+    plt.savefig(f"/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_rating_vs_sentiment_regression.png", bbox_inches="tight", pad_inches=0.5, dpi=300)
+    plt.close()
 
     print("Completed VADER analysis and saved graphs.")
