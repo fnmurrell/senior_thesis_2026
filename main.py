@@ -6,6 +6,9 @@ from Web_Scrapper.scrapper import scrape_reviews
 from EDA.exploratory_data_analysis import eda_processor
 from Sentiment_Analysis.vader_analysis import vader_analysis
 from Sentiment_Analysis.vader_visualizations import vader_visualizer
+from Sentiment_Analysis.roberta_analysis import roberta_analysis
+from Sentiment_Analysis.roberta_visualizations import roberta_visualizer
+from Sentiment_Analysis.compare_sentiment_models import sentiment_comparison
 import json
 import pandas as pd
 import os
@@ -46,8 +49,14 @@ def main():
     #vader_visualizer()
 
     # Run RoBERTa sentiment analysis
+    if(not os.path.exists("RoBERTa_reviews.json")):
+        roberta_analysis()
 
     # Run RoBERTa visualizations
+    #roberta_visualizer()
+
+    # Compare sentiment models and star ratings
+    sentiment_comparison()
 
 if __name__ == "__main__":
     main()

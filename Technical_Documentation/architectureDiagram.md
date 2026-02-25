@@ -14,7 +14,7 @@ Used matplotlib, wordcloud, and seaborn for data visualizations.
 
 ## Sentiment Analysis -- IN PROGRESS
 Used vaderSentiment for lexicon-based sentiment analysis.
-Used BERT or RoBERTa for transformer-based sentiment analysis.
+Used RoBERTa for transformer-based sentiment analysis.
 
 ## Topic Modeling -- TO DO
 gensim for topic modeling
