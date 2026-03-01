@@ -9,6 +9,7 @@ from Sentiment_Analysis.vader_visualizations import vader_visualizer
 from Sentiment_Analysis.roberta_analysis import roberta_analysis
 from Sentiment_Analysis.roberta_visualizations import roberta_visualizer
 from Sentiment_Analysis.compare_sentiment_models import sentiment_comparison
+from Topic_Modeling.lda_modeling import lda_analyzer
 import json
 import pandas as pd
 import os
@@ -56,7 +57,10 @@ def main():
     #roberta_visualizer()
 
     # Compare sentiment models and star ratings
-    sentiment_comparison()
+    #sentiment_comparison()
+
+    # Run LDA topic modeling
+    lda_analyzer()
 
 if __name__ == "__main__":
     main()
