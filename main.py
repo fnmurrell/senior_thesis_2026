@@ -9,6 +9,8 @@ from Sentiment_Analysis.vader_visualizations import vader_visualizer
 from Sentiment_Analysis.roberta_analysis import roberta_analysis
 from Sentiment_Analysis.roberta_visualizations import roberta_visualizer
 from Sentiment_Analysis.compare_sentiment_models import sentiment_comparison
+from Sentiment_Analysis.semantic_similarity_analysis import tf_idf_analyzer
+from Topic_Modeling.theme_analysis import theme_analyzer
 from Topic_Modeling.lda_modeling import lda_analyzer
 import json
 import pandas as pd
@@ -18,6 +20,7 @@ def main():
     # TODO Add a request for grabbing a url.
     # TODO Create a directory for a given url. -- Ask for title of book
     # TODO Run the processing steps where the generated files do not exist.
+    # TODO Figure out how to parameterize the visualization pieces of the pipeline
 
     # Scrape The Web
     if(not os.path.exists("goodreads_reviews.json")):
@@ -59,8 +62,16 @@ def main():
     # Compare sentiment models and star ratings
     #sentiment_comparison()
 
+    # Run TF-IDF for semantic similarity analysis
+    #tf_idf_analyzer()
+
+    # Identify frequency of predefined keywords and themes in dataset 
+    #theme_analyzer()
+
     # Run LDA topic modeling
-    lda_analyzer()
+    #lda_analyzer()
+
+    # Run BERTopic modeling
 
 if __name__ == "__main__":
     main()
