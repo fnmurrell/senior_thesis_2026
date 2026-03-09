@@ -163,6 +163,30 @@ def eda_processor():
 
     save_plot(fig, "word_count_boxplot_by_rating")
 
+    # Find mean and median of review word and character counts
+    stats_table = reviews[['review_word_count', 'review_char_count']].agg({
+        'review_word_count': ['mean', 'median', lambda x: x[x > 0].min(), 'max'],
+        'review_char_count': ['mean', 'median', lambda x: x[x > 0].min(), 'max']
+    })
+
+    fig, ax = plt.subplots(figsize=(6, 2))
+    ax.axis('off')
+
+    table = ax.table(
+        cellText=stats_table.round(2).values,
+        rowLabels=stats_table.index,
+        colLabels=stats_table.columns,
+        loc='center'
+    )
+
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.2, 1.2)
+
+    fig.tight_layout()
+
+    save_plot(fig, "review_length_statistics")
+
     # Number of reviews, star rating, and number of likes (did people resonate with negative reviews more than positive) 
     print("[EDA]: Average number of likes by star rating.")
 

@@ -5,5 +5,7 @@ goodreads_checked_reviews.json
 goodreads_cleaned_reviews.json
 goodreads_final_reviews.json
 VADER_reviews.json
+RoBERTa_reviews.json
 JSON.py
+count.py
 *__pycache__

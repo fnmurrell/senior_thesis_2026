@@ -3,8 +3,10 @@ from langdetect.lang_detect_exception import LangDetectException
 import pandas as pd
 
 def preprocessor_find_english_reviews():
-    print("[Pre-Processor]: Filter out Non-English reviews.")
-    df = pd.read_json("goodreads_reviews.json")
+    print("[Pre-Processor]: Read in all scrapped Goodreads reviews to filter out Non-English reviews.")
+    reviews = pd.read_json("goodreads_reviews.json")
+
+    print("[Pre-Processor]: The number of Goodreads reviews before preprocessing:", len(reviews))
 
     # Filter out Non-English reviews
     def detect_language(text):
@@ -20,10 +22,11 @@ def preprocessor_find_english_reviews():
         except LangDetectException:
             return "Unknown"
 
-    df['language'] = df['comment'].apply(detect_language)
+    print("[Pre-Processor]: Identify and filter out Non-English reviews.")
+    reviews['language'] = reviews['comment'].apply(detect_language)
 
     # Saving language to JSON.
-    english_only_df = df[df['language'] == 'en']
-    english_reviews = english_only_df.to_json("goodreads_eng_only_reviews.json", orient="records") 
+    eng_only = reviews[reviews['language'] == 'en']
+    eng_reviews = eng_only.to_json("goodreads_eng_only_reviews.json", orient="records") 
     
-    return english_reviews
+    return eng_reviews

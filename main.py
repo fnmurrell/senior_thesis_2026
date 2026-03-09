@@ -12,6 +12,7 @@ from Sentiment_Analysis.compare_sentiment_models import sentiment_comparison
 from Sentiment_Analysis.semantic_similarity_analysis import tf_idf_analyzer
 from Topic_Modeling.theme_analysis import theme_analyzer
 from Topic_Modeling.lda_modeling import lda_analyzer
+from Topic_Modeling.bertopic_modeling import bertopic_analyzer
 import json
 import pandas as pd
 import os
@@ -72,6 +73,7 @@ def main():
     #lda_analyzer()
 
     # Run BERTopic modeling
+    bertopic_analyzer()
 
 if __name__ == "__main__":
     main()

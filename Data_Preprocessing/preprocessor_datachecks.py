@@ -1,12 +1,12 @@
 import pandas as pd
 
 def preprocessor_datachecks():
-    print("[Pre-Processor]: Find reviews with no rating.")
-
     reviews = pd.read_json("goodreads_eng_only_reviews.json")
     reviews = reviews.drop('language', axis=1)
+    print("[Pre-Processor]: The number of Goodreads reviews after filtering to English only:", len(reviews))
     
     # Count reviews with rating = None
+    print("[Pre-Processor]: Find reviews with no rating.")
     no_rating = reviews[reviews['rating'].isna()]
     print(no_rating.count())
 
