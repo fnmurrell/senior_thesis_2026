@@ -163,4 +163,74 @@ def lda_analyzer():
 
         print(f"[LDA]: Saved: {save_path}")
 
+    # Extract representative review excerpts for the identified topics 
+    print("[LDA]: Extracting dominant topics for each review.")
+
+    doc_topic_dist = final_lda.transform(tf)
+
+    dominant_topic = np.argmax(doc_topic_dist, axis=1)
+    reviews["dominant_topic"] = dominant_topic
+    topic_prob = np.max(doc_topic_dist, axis=1)
+
+    reviews["dominant_topic"] = dominant_topic
+    reviews["topic_probability"] = topic_prob
+
+    print("[LDA]: Extracting representative review excerpts.")
+
+    top_n = 5
+
+    for topic in range(best_k):
+        topic_reviews = reviews[reviews["dominant_topic"] == topic]
+
+        topic_reviews = topic_reviews.sort_values(
+            by="topic_probability",
+            ascending=False
+        ).head(top_n)
+
+        print(f"\n--- Topic {topic+1} Representative Reviews ---")
+
+        for i, row in topic_reviews.iterrows():
+            excerpt = row["lemmatized_string"][:300]
+            print(f"- {excerpt}...")
+    
+    excerpt_path = os.path.join(output_dir, "LDA_topic_representative_reviews.txt")
+
+    with open(excerpt_path, "w") as f:
+        for topic in range(best_k):
+            topic_reviews = reviews[reviews["dominant_topic"] == topic]
+
+            topic_reviews = topic_reviews.sort_values(
+                by="topic_probability",
+                ascending=False
+            ).head(5)
+
+            f.write(f"\n=== Topic {topic+1} ===\n")
+
+            for _, row in topic_reviews.iterrows():
+                f.write(f"{row['lemmatized_string'][:400]}\n\n")
+
+    print("[LDA]: Determine topic proportions.")
+    topic_counts = reviews["dominant_topic"].value_counts().sort_index()
+    topic_proportions = topic_counts / len(reviews)
+
+    topic_table = pd.DataFrame({
+        "Topic": topic_counts.index + 1,
+        "Document_Count": topic_counts.values,
+        "Proportion": topic_proportions.values
+    })
+
+    plt.figure()
+
+    plt.bar(topic_table["Topic"], topic_table["Proportion"])
+
+    plt.xlabel("Topic")
+    plt.ylabel("Proportion of Reviews")
+    plt.title("LDA Topic Proportions")
+
+    plt.xticks(topic_table["Topic"])
+
+    save_path = os.path.join(output_dir, "lda_topic_proportions.png")
+    plt.savefig(save_path, bbox_inches="tight", pad_inches=0.5)
+    plt.close()
+
     print("[LDA]: Topic modeling complete.")

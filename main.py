@@ -18,7 +18,7 @@ import pandas as pd
 import os
 
 def main():
-    # TODO Add a request for grabbing a url.
+    # TODO Add a request for grabbing a url and NUM_PAGES.
     # TODO Create a directory for a given url. -- Ask for title of book
     # TODO Run the processing steps where the generated files do not exist.
     # TODO Figure out how to parameterize the visualization pieces of the pipeline

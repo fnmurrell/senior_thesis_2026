@@ -4,38 +4,41 @@ The primary objective of this project is to evaluate whether contemporary reader
 # Technical Design
 ## File Structure -- TO DO
 
-- Web_Scrapper 
+- Main (includes main.py, .gitignore, requirements.txt, and README) 
+- Web_Scrapper
 - Data_Preprocessing
 - EDA
 - Sentiment_Analysis
-- Technical_Documentation
 - Topic_Modeling
+- Technical_Documentation
 
-## Developer Setup -- TO DO
-1. Create new venv in project root
+## Developer Setup
+1. Install Python 3.13 and install pip. You can do this using venv or asdf. 
 
-Run this command: 'python -m venv venv'
-
-Name the directory "venv".
-(venv documentation)[https://docs.python.org/3/library/venv.html]
-
-2. Source venv
-
-Run this command.
-`source venv/bin/activate`
-
-3. Install requirements
+2. Install requirements
 
 `pip install -r requirements.txt`
 
-4. Update .gitignore file
+3. Update .gitignore file
 
-For any dataset or temporary file, do not commit those to the repository. Add those to .gitigore. 
+For any dataset or temporary files, do not commit those to the repository. Add those to .gitigore. 
 
 ## Package Update or Addition
 If you update a package or add a new one, please update the requirements.txt file by runnning the following command: `pip freeze > requirements.txt`
 
-## How to Use -- TO DO
+## How to Use
+1. Open scrapper.py within the Web_Scrapper folder. 
+
+Replace the URL with the appropriate Goodreads link to the community reviews you want to analyze. 
+Replace the numerator of NUM_PAGES with the total number of Goodreads reviews. 
+
+2. Run python main.py to initiate the pipeline. 
+
+Each step of the process will print a comment that starts with the phase. For example, all data preprocessing steps will start with "[Pre-Processor]". This will help you monitor progress and troubleshoot if you run into any errors. 
+
+3. Access visualizations in the plots subfolders. 
+
+EDA, Sentiment_Analysis, and Topic_Modeling each have a subfolder called plots. This is where generated graphs will be saved for use in analysis. 
 
 # Technical Documentation -- TO DO
 
@@ -43,24 +46,3 @@ If you update a package or add a new one, please update the requirements.txt fil
     - [Data Preprocessing](https://lucid.app/lucidchart/f310201e-f864-46a6-92d9-8a8ebd36b904/edit?viewport_loc=92%2C288%2C2746%2C1612%2C0_0&invitationId=inv_5388a2d9-5537-494e-8ccd-29625634e9c1)
 - basic database design/diagram 
 - general architecture diagram (in progress)
-
-# Helper Code
-The below code segment will identify any reviews with non-ASCII characters. You can use the function to check for successful non-ASCII removal as well. 
-
-I need to include this code in my data preprocessing files. 
-
-```
-def find_non_ascii_chars_pandas(text):
-       # This regex pattern matches any character NOT in the ASCII range
-       non_ascii_chars = re.findall(r'[^\x00-\x7F]+', str(text))
-       return ', '.join(non_ascii_chars) if non_ascii_chars else None
-
-
-   # Apply the function to a specific column and filter results
-   eng_reviews['Non_ASCII_Chars'] = eng_reviews['comment'].apply(find_non_ascii_chars_pandas)
-   non_ascii_rows = eng_reviews[eng_reviews['Non_ASCII_Chars'].notna()]
-
-
-   print("Rows containing non-ASCII characters:")
-   print(non_ascii_rows[['comment', 'Non_ASCII_Chars']])
-```

@@ -8,4 +8,5 @@ VADER_reviews.json
 RoBERTa_reviews.json
 JSON.py
 count.py
+non-ascii.py
 *__pycache__
