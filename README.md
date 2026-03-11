@@ -42,10 +42,12 @@ Each step of the process will print a comment that starts with the phase. For ex
 EDA, Sentiment_Analysis, and Topic_Modeling each have a subfolder called plots. This is where generated graphs will be saved for use in analysis. 
 
 # Technical Documentation -- IN PROGRESS
+## Flowcharts of the Project Pipeline
+![Data Preprocessing](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Data_Preprocessing_Flowchart.png "Steps of the data preprocessing phase")
+![Sentiment Analysis](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Sentiment_Analysis_Flowchart.png "Steps of the sentiment analysis phase")
+![Topic Modeling](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Topic_Modeling_Flowchart.png "Steps of the topic modeling phase")
 
-- flow chart of the project and code files (in progress) 
-    - ![Data Preprocessing](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Data Preprocessing Flowchart.png "Steps of the data preprocessing phase.").
-    - ![Sentiment Analysis](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Sentiment Analysis Flowchart.png "Steps of the sentiment analysis phase.").
-    - ![Topic Modeling](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Topic Modeling Flowchart.png "Steps of the topic modeling phase.").
+## Database & Architecture Design
+
 - basic database design/diagram 
 - general architecture diagram (in progress)
