@@ -9,4 +9,5 @@ RoBERTa_reviews.json
 JSON.py
 count.py
 non-ascii.py
+sentiment_distribution.csv
 *__pycache__

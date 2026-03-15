@@ -35,6 +35,66 @@ def compute_umass_coherence(lda_model, dtm, top_n=10):
 
     return np.mean(coherence_scores)
 
+def compute_topic_diversity_lda(lda_model, top_n=10):
+    """
+    Computes topic diversity for an LDA model.
+    """
+    topic_words = []
+
+    for topic in lda_model.components_:
+        top_indices = topic.argsort()[:-top_n - 1:-1]
+        topic_words.append(top_indices)
+
+    # Flatten top words and count unique
+    unique_words = set([i for topic in topic_words for i in topic])
+
+    diversity = len(unique_words) / (top_n * len(topic_words))
+    return diversity
+
+def compute_lda_stability(tf, n_topics, n_runs=5, top_n=10):
+    """
+    Computes stability of LDA topics across multiple fits.
+    """
+    topic_lists = []
+
+    for i in range(n_runs):
+        lda = LatentDirichletAllocation(
+            n_components=n_topics,
+            max_iter=50,
+            learning_method='online',
+            random_state=i
+        )
+        lda.fit(tf)
+
+        topics = []
+        for topic in lda.components_:
+            top_indices = topic.argsort()[:-top_n - 1:-1]
+            topics.append(top_indices.tolist())
+
+        topic_lists.append(topics)
+
+    # Compute Jaccard similarity between all pairs of runs
+    def jaccard(a, b):
+        a, b = set(a), set(b)
+        return len(a & b) / len(a | b)
+
+    stability_scores = []
+
+    for i in range(len(topic_lists)):
+        for j in range(i + 1, len(topic_lists)):
+            topics_a = topic_lists[i]
+            topics_b = topic_lists[j]
+
+            sims = []
+            for ta in topics_a:
+                best = max(jaccard(ta, tb) for tb in topics_b)
+                sims.append(best)
+
+            stability_scores.append(np.mean(sims))
+
+    stability = np.mean(stability_scores)
+    return stability
+
 def lda_analyzer():
     print("[LDA]: Reading Goodreads dataset.")
     reviews = pd.read_json("VADER_reviews.json")[["lemmatized_string"]]
@@ -233,4 +293,10 @@ def lda_analyzer():
     plt.savefig(save_path, bbox_inches="tight", pad_inches=0.5)
     plt.close()
 
-    print("[LDA]: Topic modeling complete.")
+    # Diversity
+    diversity = compute_topic_diversity_lda(final_lda, top_n=10)
+    print(f"[LDA]: Topic Diversity = {diversity:.4f}")
+
+    # Stability (optional: 5 runs)
+    stability = compute_lda_stability(tf, n_topics=best_k, n_runs=5, top_n=10)
+    print(f"[LDA]: Topic Stability = {stability:.4f}")
