@@ -72,7 +72,8 @@ def bertopic_analyzer():
     # Remove non-meaningful words
     custom_stopwords = list(
         text.ENGLISH_STOP_WORDS.union({ 
-            "stowe", "harriet", "beecher", "cabin", "toms", "uncle", "book", "author", "novel", "review", "read" 
+            "stowe", "harriet", "beecher", "cabin", "toms", "uncle", "book", "author", "novel", "review", "read",
+            "saturday","sunday","monday","tuesday","wednesday","thursday","friday" 
         }) 
     )
     vectorizer_model = CountVectorizer(stop_words=custom_stopwords)
