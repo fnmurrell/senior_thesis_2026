@@ -61,11 +61,11 @@ def bertopic_analyzer():
     print("[BERTopic]: Reading Goodreads dataset.")
     
     # Load dataset
-    reviews = pd.read_json("VADER_reviews.json")
+    reviews = pd.read_json("LDA_reviews.json")
         
     # Keep only the lemmatized text column
     docs = reviews["lemmatized_string"].tolist()
-    dates = pd.to_datetime(reviews["date"]).dt.date.tolist()
+    dates = pd.to_datetime(reviews["date"])
         
     print(f"[BERTopic]: Number of documents: {len(docs)}")
     
@@ -158,7 +158,6 @@ def bertopic_analyzer():
 
     for i in range(len(topic_lists)):
         for j in range(i + 1, len(topic_lists)):
-
             topics_a = topic_lists[i]
             topics_b = topic_lists[j]
 
@@ -175,7 +174,7 @@ def bertopic_analyzer():
     print(f"[BERTopic]: Topic Stability = {stability:.4f}")
 
     # Select the final model 
-    print("\n[BERTopic]: Selecting best model based on coherence.")
+    print("[BERTopic]: Selecting best model based on coherence.")
     best_index = np.argmax(coherences)
 
     topic_model = models[best_index]
@@ -187,30 +186,28 @@ def bertopic_analyzer():
     print(f"[BERTopic]: Diversity = {diversities[best_index]:.4f}")
 
     # Reduce / merge similar topics
-    topic_model = topic_model.reduce_topics(docs, nr_topics=20)
-
-    # Reduce outliers
     topics = topic_model.reduce_outliers(docs, topics)
-
-    # Update the model with the new topic assignments
     topic_model.update_topics(docs, topics=topics)
+    topic_model.reduce_topics(docs, nr_topics=20)
+
+    topics = topic_model.topics_
 
     # Assign final topics to the DataFrame
-    reviews["topic"] = topics
+    reviews["bert_topic"] = topics
 
     # Calculate topic proportions
-    valid_reviews = reviews[reviews["topic"] != -1]
-    topic_counts = valid_reviews["topic"].value_counts().sort_index()
+    valid_reviews = reviews[reviews["bert_topic"] != -1]
+    topic_counts = valid_reviews["bert_topic"].value_counts().sort_index()
     topic_proportions = topic_counts / len(valid_reviews)
-    
-    # Visualize a barchart of selected topics
-    topic_model._create_topic_vectors()
-    fig = topic_model.visualize_barchart()
-    fig.write_html("/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_barchart.html")
 
     # Visualize 2D image of topics
     fig = topic_model.visualize_topics()
     fig.write_html("/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_map.html")
+
+    # Visualize a barchart of selected topics
+    # topic_model._create_topic_vectors()
+    fig = topic_model.visualize_barchart()
+    fig.write_html("/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_barchart.html")
 
     # Visualize the topics over time
     topics_over_time = topic_model.topics_over_time(docs, dates, nr_bins=50)
@@ -262,11 +259,10 @@ def bertopic_analyzer():
     # Identify representative reviews for each topic
     print("[BERTopic]: Extracting representative review excerpts.")
 
-    reviews["topic"] = topics
-    if probs is not None:
-        reviews["topic_probability"] = probs.max(axis=1)
+    if topic_model.probabilities_ is not None:
+        reviews["bert_prob"] = topic_model.probabilities_.max(axis=1)
     else:
-        reviews["topic_probability"] = 0
+        reviews["bert_prob"] = 0
 
     top_n = 5
     output_path = "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_topic_representative_reviews.txt"
@@ -276,10 +272,10 @@ def bertopic_analyzer():
             if topic == -1:
                 continue
 
-            topic_reviews = reviews[reviews["topic"] == topic]
+            topic_reviews = reviews[reviews["bert_topic"] == topic]
 
             topic_reviews = topic_reviews.sort_values(
-                by="topic_probability",
+                by="bert_prob",
                 ascending=False
             ).head(top_n)
 
@@ -287,3 +283,7 @@ def bertopic_analyzer():
 
             for _, row in topic_reviews.iterrows():
                 f.write(f"{row['lemmatized_string'][:400]}\n\n")
+    
+    # save BERTopic topics and probabilities to JSON
+    print("[BERTopic]: Save topics and topic probability to dataset.")
+    reviews.to_json("BERTopic_reviews.json", orient="records", indent=2)

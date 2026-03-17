@@ -17,7 +17,7 @@ def extract_score(text):
 
 def vader_analysis():
     print("[VADER]: Read in final Goodreads dataset.")
-    reviews = pd.read_json("goodreads_final_reviews.json")[["user", "rating", "date", "lemmatized_comment"]]
+    reviews = pd.read_json("goodreads_final_reviews.json")[["user", "rating", "date", "lemmatized_comment","review_word_count"]]
 
     # Convert lemmatized comment back into string
     print("[VADER]: Convert lemmatized comment into string for analysis.")

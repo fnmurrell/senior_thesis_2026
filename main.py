@@ -70,10 +70,12 @@ def main():
     #theme_analyzer()
 
     # Run LDA topic modeling
-    #lda_analyzer()
+    if(not os.path.exists("LDA_reviews.json")):
+        lda_analyzer()
 
     # Run BERTopic modeling
-    bertopic_analyzer()
+    if(not os.path.exists("BERTopic_reviews.json")):
+        bertopic_analyzer()
 
 if __name__ == "__main__":
     main()

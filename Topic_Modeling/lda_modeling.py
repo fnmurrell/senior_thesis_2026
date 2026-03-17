@@ -36,9 +36,6 @@ def compute_umass_coherence(lda_model, dtm, top_n=10):
     return np.mean(coherence_scores)
 
 def compute_topic_diversity_lda(lda_model, top_n=10):
-    """
-    Computes topic diversity for an LDA model.
-    """
     topic_words = []
 
     for topic in lda_model.components_:
@@ -52,9 +49,6 @@ def compute_topic_diversity_lda(lda_model, top_n=10):
     return diversity
 
 def compute_lda_stability(tf, n_topics, n_runs=5, top_n=10):
-    """
-    Computes stability of LDA topics across multiple fits.
-    """
     topic_lists = []
 
     for i in range(n_runs):
@@ -97,7 +91,7 @@ def compute_lda_stability(tf, n_topics, n_runs=5, top_n=10):
 
 def lda_analyzer():
     print("[LDA]: Reading Goodreads dataset.")
-    reviews = pd.read_json("VADER_reviews.json")[["lemmatized_string"]]
+    reviews = pd.read_json("RoBERTa_reviews.json")
 
     output_dir = "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/"
     os.makedirs(output_dir, exist_ok=True)
@@ -228,22 +222,18 @@ def lda_analyzer():
 
     doc_topic_dist = final_lda.transform(tf)
 
-    dominant_topic = np.argmax(doc_topic_dist, axis=1)
-    reviews["dominant_topic"] = dominant_topic
-    topic_prob = np.max(doc_topic_dist, axis=1)
-
-    reviews["dominant_topic"] = dominant_topic
-    reviews["topic_probability"] = topic_prob
+    # Determine dominant topic and probability
+    reviews["lda_topic"] = np.argmax(doc_topic_dist, axis=1)
+    reviews["lda_prob"] = np.max(doc_topic_dist, axis=1)
 
     print("[LDA]: Extracting representative review excerpts.")
-
     top_n = 5
 
     for topic in range(best_k):
-        topic_reviews = reviews[reviews["dominant_topic"] == topic]
+        topic_reviews = reviews[reviews["lda_topic"] == topic]
 
         topic_reviews = topic_reviews.sort_values(
-            by="topic_probability",
+            by="lda_prob",
             ascending=False
         ).head(top_n)
 
@@ -257,10 +247,10 @@ def lda_analyzer():
 
     with open(excerpt_path, "w") as f:
         for topic in range(best_k):
-            topic_reviews = reviews[reviews["dominant_topic"] == topic]
+            topic_reviews = reviews[reviews["lda_topic"] == topic]
 
             topic_reviews = topic_reviews.sort_values(
-                by="topic_probability",
+                by="lda_prob",
                 ascending=False
             ).head(5)
 
@@ -270,8 +260,8 @@ def lda_analyzer():
                 f.write(f"{row['lemmatized_string'][:400]}\n\n")
 
     print("[LDA]: Determine topic proportions.")
-    topic_counts = reviews["dominant_topic"].value_counts().sort_index()
-    topic_proportions = topic_counts / len(reviews)
+    topic_counts = reviews["lda_topic"].value_counts().sort_index()
+    topic_proportions = topic_counts / topic_counts.sum()
 
     topic_table = pd.DataFrame({
         "Topic": topic_counts.index + 1,
@@ -300,3 +290,7 @@ def lda_analyzer():
     # Stability (optional: 5 runs)
     stability = compute_lda_stability(tf, n_topics=best_k, n_runs=5, top_n=10)
     print(f"[LDA]: Topic Stability = {stability:.4f}")
+
+    # save LDA dominant topics to JSON
+    print("[LDA]: Save topics and topic probability to dataset.")
+    reviews.to_json("LDA_reviews.json", orient="records", indent=2)
