@@ -25,6 +25,7 @@ def preprocessor_tokenize():
           value = reviews.apply(lambda row: word_tokenize(row['comment']), axis=1))
 
     # remove stopwords from review text using NLTK
+    # TODO remove any references to weekdays. Remove numbers from reviews. 
     print("[Pre-Processor]: Remove stopwords from review text.")
     stop_words = set(stopwords.words('english'))
     words_to_keep = {'no','not','never'}

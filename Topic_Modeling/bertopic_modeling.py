@@ -76,7 +76,6 @@ def bertopic_analyzer():
             "saturday","sunday","monday","tuesday","wednesday","thursday","friday" 
         }) 
     )
-    vectorizer_model = CountVectorizer(stop_words=custom_stopwords)
 
     num_runs = 5
     models = []
@@ -104,6 +103,11 @@ def bertopic_analyzer():
             cluster_selection_method="eom",
             prediction_data=True
         )
+        
+        vectorizer_model = CountVectorizer(
+            stop_words=custom_stopwords,
+            token_pattern=r"(?u)\b[a-zA-Z]{2,}\b"
+        )
 
         topic_model = BERTopic(
             umap_model=umap_model,
@@ -128,7 +132,7 @@ def bertopic_analyzer():
         topic_lists.append(topic_words)
 
         # Coherence scores
-        feature_names = vectorizer_model.get_feature_names_out()
+        feature_names = topic_model.vectorizer_model.get_feature_names_out()
         word_to_index = {word: i for i, word in enumerate(feature_names)}
 
         topic_word_indices = []

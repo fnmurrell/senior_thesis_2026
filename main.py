@@ -13,6 +13,7 @@ from Sentiment_Analysis.semantic_similarity_analysis import tf_idf_analyzer
 from Topic_Modeling.theme_analysis import theme_analyzer
 from Topic_Modeling.lda_modeling import lda_analyzer
 from Topic_Modeling.bertopic_modeling import bertopic_analyzer
+from Statistical_Analysis.evaluation_tests import model_evalutions
 import json
 import pandas as pd
 import os
@@ -22,6 +23,7 @@ def main():
     # TODO Create a directory for a given url. -- Ask for title of book
     # TODO Run the processing steps where the generated files do not exist.
     # TODO Figure out how to parameterize the visualization pieces of the pipeline
+    # TODO Create a script that assigns a unique identifier to each review in the dataset.
 
     # Scrape The Web
     if(not os.path.exists("goodreads_reviews.json")):
@@ -76,6 +78,9 @@ def main():
     # Run BERTopic modeling
     if(not os.path.exists("BERTopic_reviews.json")):
         bertopic_analyzer()
+
+    # Run statistical evaluations
+    model_evalutions()
 
 if __name__ == "__main__":
     main()

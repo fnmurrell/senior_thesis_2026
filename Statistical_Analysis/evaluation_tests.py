@@ -25,10 +25,10 @@ def model_evalutions():
     print("[MODEL EVAL]: Reading Goodreads dataset.")
     
     # Load dataset
-    reviews = pd.read_json("BERTopic_reviews.json")
+    reviews = pd.read_json("evaluation_reviews.json")
 
     # Binary Star Ratings (for logistic regression)
-    reviews["high_rating"] = (reviews["rating"] >= 4)
+    reviews["high_rating"] = (reviews["rating"] >= 4).astype(int)
 
     # binary sentiment using RoBERTa
     reviews["roberta_positive"] = (reviews["roberta_label"] == "positive").astype(int)
@@ -48,20 +48,22 @@ def model_evalutions():
 
     # sentiment model validation -- chi-square (sentiment category v star rating)
     table = pd.crosstab(reviews["roberta_label"], reviews["high_rating"])
-
     chi2, p, dof, expected = chi2_contingency(table)
 
-    print("Chi-square:", chi2)
-    print("p-value:", p)
+    print("RoBERTa Chi-square:", chi2)
+    print("RoBERTa p-value:", p)
 
     # sentiment theme relationship -- chi-square (topic vs sentiment)
     table = pd.crosstab(reviews["bert_topic"], reviews["roberta_label"])
     chi2, p, dof, expected = chi2_contingency(table)
 
+    print("BERTopic Chi-square:", chi2)
+    print("BERTopic p-value:", p)
+
     # table = pd.crosstab(reviews["lda_topic"], reviews["VADER_label"])
     # chi2, p, dof, expected = chi2_contingency(table)
 
-# logistic regression (predicting sentiment or ratings)
+    # logistic regression (predicting sentiment or ratings)
     X = reviews[["review_word_count", "lda_topic_freq", "bert_topic_freq"]]
     X = sm.add_constant(X)
 
@@ -83,7 +85,6 @@ def model_evalutions():
 
     print(corr_matrix)
 
-
     # temporal validations 
     reviews["year"] = pd.to_datetime(reviews["date"]).dt.year
     
@@ -96,3 +97,6 @@ def model_evalutions():
     # topics over time
     table = pd.crosstab(reviews["year"], reviews["bert_topic"])
     chi2, p, dof, exp = chi2_contingency(table)
+
+    print("Topics Over Time Chi-square:", chi2)
+    print("Topics Over Time p-value:", p)
