@@ -13,7 +13,7 @@ from Sentiment_Analysis.semantic_similarity_analysis import tf_idf_analyzer
 from Topic_Modeling.theme_analysis import theme_analyzer
 from Topic_Modeling.lda_modeling import lda_analyzer
 from Topic_Modeling.bertopic_modeling import bertopic_analyzer
-from Statistical_Analysis.evaluation_tests import model_evalutions
+from Statistical_Analysis.evaluation_tests import model_evaluations
 import json
 import pandas as pd
 import os
@@ -80,7 +80,7 @@ def main():
         bertopic_analyzer()
 
     # Run statistical evaluations
-    model_evalutions()
+    model_evaluations()
 
 if __name__ == "__main__":
     main()

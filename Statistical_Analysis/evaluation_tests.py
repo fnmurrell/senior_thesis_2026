@@ -1,102 +1,227 @@
-'''
-Validate sentiment–theme relationships across the sentiment models
-Perform correlation analysis between sentiment scores, star ratings, review length, and thematic features 
-Conduct inferential statistical tests (e.g., chi-square, logistic regression)
-
-Relationship Testing & Statistical Validation
-Conduct chi-square tests to assess associations between thematic presence (binary or categorical) and sentiment categories. 
-Use logistic regression models to evaluate if thematic features and review length predict positive versus negative sentiment or high versus low star ratings. 
-Utilize Spearman correlation to examine relationships among sentiment scores, review length, theme frequency, and star ratings. 
-
-Sentiment Analysis
-Use Spearman rank correlation to evaluate alignment between sentiment scores and star ratings. 
-Use chi-square tests to evaluate if sentiment categories are significantly associated with high versus low star ratings.
-
-Temporal Validation
-Statistical comparisons across time periods will be used to assess whether observed changes are systematic rather than anecdotal.
-
-'''
-from scipy.stats import spearmanr
-from scipy.stats import chi2_contingency
+from scipy.stats import spearmanr, chi2_contingency
 import pandas as pd
 import statsmodels.api as sm
+import numpy as np
+from sklearn.metrics import accuracy_score
+import os
+import matplotlib.pyplot as plt
 
-def model_evalutions():
+PLOTS_DIR = "/home/faith/Documents/Senior_Thesis_2026/Statistical_Analysis/plots"
+os.makedirs(PLOTS_DIR, exist_ok=True)
+
+def cramers_v(chi2, n, r, k):
+    return np.sqrt(chi2 / (n * (min(r - 1, k - 1))))
+
+def model_evaluations():
     print("[MODEL EVAL]: Reading Goodreads dataset.")
-    
-    # Load dataset
     reviews = pd.read_json("evaluation_reviews.json")
 
-    # Binary Star Ratings (for logistic regression)
+    # Prepare all features for evaluation
     reviews["high_rating"] = (reviews["rating"] >= 4).astype(int)
-
-    # binary sentiment using RoBERTa
     reviews["roberta_positive"] = (reviews["roberta_label"] == "positive").astype(int)
+    reviews["vader_positive"] = (reviews["VADER_label"] == "positive").astype(int)
 
-    # reviews["vader_positive"] = (reviews["VADER_label"] == "positive").astype(int)
-
-    # topic frequencies
     reviews["lda_topic_freq"] = reviews.groupby("lda_topic")["lda_topic"].transform("count")
     reviews["bert_topic_freq"] = reviews.groupby("bert_topic")["bert_topic"].transform("count")
 
-    # sentiment model validation -- spearman correlation (sentiment score v star rating)
-    corr_vader, p_vader = spearmanr(reviews["VADER_compound"], reviews["rating"])
-    corr_roberta, p_roberta = spearmanr(reviews["roberta_compound"], reviews["rating"])
+    # Spearman Correlation
+    print("[MODEL EVAL]: Calculate Spearman Correlation.")
 
-    print("VADER correlation:", corr_vader, p_vader)
-    print("RoBERTa correlation:", corr_roberta, p_roberta)
+    vader_df = reviews[["VADER_compound", "rating"]].dropna()
+    roberta_df = reviews[["roberta_compound", "rating"]].dropna()
 
-    # sentiment model validation -- chi-square (sentiment category v star rating)
+    corr_vader, p_vader = spearmanr(vader_df["VADER_compound"], vader_df["rating"])
+    corr_roberta, p_roberta = spearmanr(roberta_df["roberta_compound"], roberta_df["rating"])
+
+    print(f"VADER: rho={corr_vader:.3f}, p={p_vader:.3e}")
+    print(f"RoBERTa: rho={corr_roberta:.3f}, p={p_roberta:.3e}")
+
+    # Sentiment vs Rating (boxplot)
+    plt.figure()
+    reviews.boxplot(column="roberta_compound", by="rating")
+    plt.title("RoBERTa Sentiment by Star Rating")
+    plt.suptitle("")
+    plt.xlabel("Rating")
+    plt.ylabel("Sentiment Score")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "RoBERTa_sentiment_star_rating.png"))
+    plt.close()
+
+    # Chi-square Tests
+    print("[MODEL EVAL]: Perform Chi-square Tests.")
+
+    def plot_heatmap(table, title, filename):
+        plt.figure()
+        plt.imshow(table, aspect='auto')
+        plt.xticks(range(len(table.columns)), table.columns)
+        plt.yticks(range(len(table.index)), table.index)
+        plt.title(title)
+        plt.xlabel(table.columns.name if table.columns.name else "")
+        plt.ylabel(table.index.name if table.index.name else "")
+
+        for i in range(table.shape[0]):
+            for j in range(table.shape[1]):
+                plt.text(j, i, table.iloc[i, j], ha='center', va='center')
+
+        plt.colorbar()
+        plt.tight_layout()
+        plt.savefig(os.path.join(PLOTS_DIR, filename))
+        plt.close()
+
+    # RoBERTa sentiment vs rating
     table = pd.crosstab(reviews["roberta_label"], reviews["high_rating"])
     chi2, p, dof, expected = chi2_contingency(table)
+    n = table.values.sum()
+    r, k = table.shape
 
-    print("RoBERTa Chi-square:", chi2)
-    print("RoBERTa p-value:", p)
+    print(f"RoBERTa χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+    plot_heatmap(table, "RoBERTa Sentiment vs High Rating", "roberta_heatmap.png")
 
-    # sentiment theme relationship -- chi-square (topic vs sentiment)
+    # VADER sentiment vs rating
+    table = pd.crosstab(reviews["VADER_label"], reviews["high_rating"])
+    chi2, p, dof, expected = chi2_contingency(table)
+    n = table.values.sum()
+    r, k = table.shape
+
+    print(f"VADER χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+    plot_heatmap(table, "VADER Sentiment vs High Rating", "vader_heatmap.png")
+
+    # BERTopic vs sentiment
     table = pd.crosstab(reviews["bert_topic"], reviews["roberta_label"])
     chi2, p, dof, expected = chi2_contingency(table)
+    n = table.values.sum()
+    r, k = table.shape
 
-    print("BERTopic Chi-square:", chi2)
-    print("BERTopic p-value:", p)
+    print(f"BERTopic χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+    plot_heatmap(table, "BERTopic vs RoBERTa Sentiment", "bertopic_heatmap.png")
 
-    # table = pd.crosstab(reviews["lda_topic"], reviews["VADER_label"])
-    # chi2, p, dof, expected = chi2_contingency(table)
+    # LDA topic vs sentiment
+    table = pd.crosstab(reviews["lda_topic"], reviews["roberta_label"])
+    chi2, p, dof, expected = chi2_contingency(table)
+    n = table.values.sum()
+    r, k = table.shape
 
-    # logistic regression (predicting sentiment or ratings)
-    X = reviews[["review_word_count", "lda_topic_freq", "bert_topic_freq"]]
+    print(f"LDA χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+    plot_heatmap(table, "LDA Topic vs RoBERTa Sentiment", "lda_heatmap.png")
+
+    # Logistic Regression (Ratings)
+    print("[MODEL EVAL]: Perform Logistic Regression: Predicting High Rating.")
+
+    X = reviews[["review_word_count", "lda_topic_freq", "bert_topic_freq"]].copy()
     X = sm.add_constant(X)
-
     y = reviews["high_rating"]
 
-    model = sm.Logit(y, X).fit()
+    valid_idx = X.dropna().index.intersection(y.dropna().index)
+    X_clean = X.loc[valid_idx]
+    y_clean = y.loc[valid_idx]
 
+    model = sm.Logit(y_clean, X_clean).fit()
     print(model.summary())
 
-    # correlation analysis 
+    # Odds ratios
+    odds_ratios = np.exp(model.params)
+    print("Odds Ratios:\n", odds_ratios)
+
+    # Accuracy
+    preds = model.predict(X_clean)
+    pred_labels = (preds >= 0.5).astype(int)
+    print("Accuracy:", accuracy_score(y_clean, pred_labels))
+
+    # Odds ratios
+    plt.figure()
+    plt.bar(odds_ratios.index, odds_ratios.values)
+    plt.xticks(rotation=45)
+    plt.ylabel("Odds Ratio")
+    plt.title("Feature Effects on High Rating")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "feature_effects_high_rating.png"))
+    plt.close()
+
+    # Logistic Regression (Sentiment)
+    print("[MODEL EVAL]: Perform Logistic Regression: Predicting Sentiment.")
+
+    y_sent = reviews["roberta_positive"].loc[valid_idx]
+
+    model_sent = sm.Logit(y_sent, X_clean).fit()
+    print(model_sent.summary())
+
+    odds_ratios_sent = np.exp(model_sent.params)
+    print("Odds Ratios (Sentiment):\n", odds_ratios_sent)
+
+    preds_sent = model_sent.predict(X_clean)
+    pred_labels_sent = (preds_sent >= 0.5).astype(int)
+    print("Accuracy (Sentiment):", accuracy_score(y_sent, pred_labels_sent))
+
+    # Correlation Matrix
+    print("[MODEL EVAL]: Calculate Spearman Correlation Matrix.")
+
     corr_matrix = reviews[
         ["VADER_compound",
-        "roberta_compound",
-        "rating",
-        "review_word_count",
-        "lda_topic_freq",
-        "bert_topic_freq"]
+         "roberta_compound",
+         "rating",
+         "review_word_count",
+         "lda_topic_freq",
+         "bert_topic_freq"]
     ].corr(method="spearman")
 
-    print(corr_matrix)
+    # Correlation heatmap
+    plt.figure()
+    plt.imshow(corr_matrix, aspect='auto')
+    plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=45)
+    plt.yticks(range(len(corr_matrix.index)), corr_matrix.index)
+    plt.title("Spearman Correlation Matrix")
 
-    # temporal validations 
-    reviews["year"] = pd.to_datetime(reviews["date"]).dt.year
-    
-    # RoBERTa sentiment over time 
-    reviews.groupby("year")["roberta_compound"].mean()
+    for i in range(corr_matrix.shape[0]):
+        for j in range(corr_matrix.shape[1]):
+            plt.text(j, i, f"{corr_matrix.iloc[i, j]:.2f}", ha='center', va='center')
 
-    # VADER sentiment over time
-    reviews.groupby("year")["VADER_compound"].mean()
+    plt.colorbar()
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "spearman_correlation_matrix.png"))
+    plt.close()
 
-    # topics over time
+    # Temporal Analysis
+    print("[MODEL EVAL]: Conduct Temporal Analysis.")
+
+    reviews["year"] = pd.to_datetime(reviews["date"], errors="coerce").dt.year
+
+    roberta_time = reviews.groupby("year")["roberta_compound"].mean()
+    vader_time = reviews.groupby("year")["VADER_compound"].mean()
+
+    # Sentiment over time
+    plt.figure()
+    plt.plot(roberta_time.index, roberta_time.values)
+    plt.xlabel("Year")
+    plt.ylabel("Average Sentiment")
+    plt.title("RoBERTa Sentiment Over Time")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "RoBERTa_over_time.png"))
+    plt.close()
+
+    plt.figure()
+    plt.plot(vader_time.index, vader_time.values)
+    plt.xlabel("Year")
+    plt.ylabel("Average Sentiment")
+    plt.title("VADER Sentiment Over Time")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "VADER_over_time.png"))
+    plt.close()
+
+    # Topics over time
     table = pd.crosstab(reviews["year"], reviews["bert_topic"])
     chi2, p, dof, exp = chi2_contingency(table)
+    n = table.values.sum()
+    r, k = table.shape
 
-    print("Topics Over Time Chi-square:", chi2)
-    print("Topics Over Time p-value:", p)
+    print(f"Topics Over Time χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+
+    # Topics over time heatmap
+    plt.figure()
+    plt.imshow(table, aspect='auto')
+    plt.title("Topics Over Time")
+    plt.xlabel("Topic")
+    plt.ylabel("Year")
+    plt.colorbar()
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "topics_over_time.png"))
+    plt.close()
