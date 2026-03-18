@@ -7,11 +7,13 @@ The primary objective of this project is to evaluate whether contemporary reader
 - Main (includes main.py, .gitignore, requirements.txt, and README) 
 - Web_Scrapper
 - Data_Preprocessing
-- EDA
-- Sentiment_Analysis
-- Topic_Modeling
-- Statistical Analyses -- TO DO 
+- EDA (Exploratory Data Analysis)*
+- Sentiment_Analysis*
+- Topic_Modeling*
+- Statistical Analysis*
 - Technical_Documentation
+
+*Each of these folders includes a subfolder called plots that contains any graphics, charts, or tables generated during the modeling and analysis. 
 
 ## Developer Setup
 1. Install Python 3.13 and install pip. You can do this using venv or asdf. 
@@ -37,15 +39,15 @@ Replace the numerator of NUM_PAGES with the total number of Goodreads reviews.
 
 Each step of the process will print a comment that starts with the phase. For example, all data preprocessing steps will start with "[Pre-Processor]". This will help you monitor progress and troubleshoot if you run into any errors. 
 
-3. Access visualizations in the plots subfolders. 
-
-EDA, Sentiment_Analysis, and Topic_Modeling each have a subfolder called plots. This is where generated graphs will be saved for use in analysis. 
+3. Access visualizations in the plots subfolders (see File Structure above).
 
 # Technical Documentation -- IN PROGRESS
 ## Flowcharts of the Project Pipeline
 ![Data Preprocessing](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Data_Preprocessing_Flowchart.png "Steps of the data preprocessing phase")
 ![Sentiment Analysis](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Sentiment_Analysis_Flowchart.png "Steps of the sentiment analysis phase")
 ![Topic Modeling](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Topic_Modeling_Flowchart.png "Steps of the topic modeling phase")
+
+-- adding another process flow for Statistical Analysis 
 
 ## Database & Architecture Design
 

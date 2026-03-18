@@ -21,12 +21,8 @@ Used scikit-learn for feature extraction and similarity analysis.
 Used TF-IDF-based vectorization for keyword matching and semantic similarity analysis.
 Used Latent Dirichlet Allocation (LDA) and BERTopic for topic modeling. 
 
-## Statistical Analysis -- TO DO
-scipy and statsmodels for statistical testing and analysis
-Descriptive statistical analysis of sentiment scores, star ratings, review length, and theme frequencies
-Correlation analysis to examine relationships between sentiment, themes, and ratings
-Basic inferential statistical methods (e.g., chi-square tests and logistic regression)
-Temporal analysis by grouping reviews by year to explore changes in sentiment and theme frequency over time
+## Statistical Analysis
+Used scipy, scikit-learn, and statsmodels for statistical testing and analysis. 
 
 ## Data Visualization
 Used matplotlib, seaborn, and wordcloud for data visualization. 
