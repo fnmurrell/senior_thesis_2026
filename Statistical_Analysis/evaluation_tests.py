@@ -2,7 +2,7 @@ from scipy.stats import spearmanr, chi2_contingency
 import pandas as pd
 import statsmodels.api as sm
 import numpy as np
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, cohen_kappa_score
 import os
 import matplotlib.pyplot as plt
 
@@ -25,7 +25,7 @@ def model_evaluations():
     reviews["bert_topic_freq"] = reviews.groupby("bert_topic")["bert_topic"].transform("count")
 
     # Spearman Correlation
-    print("[MODEL EVAL]: Calculate Spearman Correlation.")
+    print("[MODEL EVAL]: Calculate Spearman correlation.")
 
     vader_df = reviews[["VADER_compound", "rating"]].dropna()
     roberta_df = reviews[["roberta_compound", "rating"]].dropna()
@@ -47,8 +47,18 @@ def model_evaluations():
     plt.savefig(os.path.join(PLOTS_DIR, "RoBERTa_sentiment_star_rating.png"))
     plt.close()
 
+    # Understand sentiment model agreement
+    print("[MODEL EVAL]: Calculate sentiment model agreement.")
+    kappa = cohen_kappa_score(reviews["roberta_positive"], reviews["vader_positive"])
+
+    # Save result
+    with open(os.path.join(PLOTS_DIR, "cohens_kappa.txt"), "w") as f:
+        f.write(f"Cohen's Kappa: {kappa:.4f}")
+
+    print(f"Cohen's Kappa: {kappa:.4f}")
+
     # Chi-square Tests
-    print("[MODEL EVAL]: Perform Chi-square Tests.")
+    print("[MODEL EVAL]: Perform Chi-square tests.")
 
     def plot_heatmap(table, title, filename):
         plt.figure()
@@ -104,10 +114,42 @@ def model_evaluations():
     print(f"LDA χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
     plot_heatmap(table, "LDA Topic vs RoBERTa Sentiment", "lda_heatmap.png")
 
+    # Topic-level sentiment summaries
+    print("[MODEL EVAL]: Topic-level sentiment summaries.")
+
+    topic_sentiment = reviews.groupby("bert_topic")["roberta_compound"].agg(["mean", "std", "count"])
+    topic_sentiment = topic_sentiment.sort_values("mean", ascending=False)
+
+    # Save table
+    topic_sentiment.to_csv(os.path.join(PLOTS_DIR, "bert_topic_sentiment_summary.csv"))
+
+    # Bar plot of mean sentiment
+    plt.figure()
+    plt.bar(topic_sentiment.index.astype(str), topic_sentiment["mean"])
+    plt.xticks(rotation=90)
+    plt.ylabel("Mean Sentiment")
+    plt.xlabel("BERTopic Topic")
+    plt.title("Average Sentiment by Topic")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "bert_topic_sentiment_means.png"))
+    plt.close()
+
+    print("[MODEL EVAL]: Plot sentiment distribution by topic.")
+
+    plt.figure()
+    reviews.boxplot(column="roberta_compound", by="bert_topic", rot=90)
+    plt.title("Sentiment Distribution by BERTopic Topic")
+    plt.suptitle("")
+    plt.xlabel("Topic")
+    plt.ylabel("Sentiment Score")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "sentiment_by_topic_boxplot.png"))
+    plt.close()
+
     # Logistic Regression (Ratings)
     print("[MODEL EVAL]: Perform Logistic Regression: Predicting High Rating.")
 
-    X = reviews[["review_word_count", "lda_topic_freq", "bert_topic_freq"]].copy()
+    X = reviews[["review_word_count", "lda_prob", "bert_prob"]].copy()
     X = sm.add_constant(X)
     y = reviews["high_rating"]
 
@@ -139,7 +181,6 @@ def model_evaluations():
 
     # Logistic Regression (Sentiment)
     print("[MODEL EVAL]: Perform Logistic Regression: Predicting Sentiment.")
-
     y_sent = reviews["roberta_positive"].loc[valid_idx]
 
     model_sent = sm.Logit(y_sent, X_clean).fit()
@@ -182,7 +223,6 @@ def model_evaluations():
 
     # Temporal Analysis
     print("[MODEL EVAL]: Conduct Temporal Analysis.")
-
     reviews["year"] = pd.to_datetime(reviews["date"], errors="coerce").dt.year
 
     roberta_time = reviews.groupby("year")["roberta_compound"].mean()
