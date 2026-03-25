@@ -117,21 +117,38 @@ def model_evaluations():
     # Topic-level sentiment summaries
     print("[MODEL EVAL]: Topic-level sentiment summaries.")
 
-    topic_sentiment = reviews.groupby("bert_topic")["roberta_compound"].agg(["mean", "std", "count"])
-    topic_sentiment = topic_sentiment.sort_values("mean", ascending=False)
+    bertopic_sentiment = reviews.groupby("bert_topic")["roberta_compound"].agg(["mean", "std", "count"])
+    bertopic_sentiment = bertopic_sentiment.sort_values("mean", ascending=False)
 
     # Save table
-    topic_sentiment.to_csv(os.path.join(PLOTS_DIR, "bert_topic_sentiment_summary.csv"))
+    bertopic_sentiment.to_csv(os.path.join(PLOTS_DIR, "bert_topic_sentiment_summary.csv"))
 
     # Bar plot of mean sentiment
     plt.figure()
-    plt.bar(topic_sentiment.index.astype(str), topic_sentiment["mean"])
+    plt.bar(bertopic_sentiment.index.astype(str), bertopic_sentiment["mean"])
     plt.xticks(rotation=90)
     plt.ylabel("Mean Sentiment")
     plt.xlabel("BERTopic Topic")
     plt.title("Average Sentiment by Topic")
     plt.tight_layout()
     plt.savefig(os.path.join(PLOTS_DIR, "bert_topic_sentiment_means.png"))
+    plt.close()
+
+    lda_sentiment = reviews.groupby("lda_topic")["roberta_compound"].agg(["mean", "std", "count"])
+    lda_sentiment = lda_sentiment.sort_values("mean", ascending=False)
+
+    # Save table
+    lda_sentiment.to_csv(os.path.join(PLOTS_DIR,"lda_topic_sentiment_summary.csv"))
+
+    # Bar plot of mean sentiment
+    plt.figure()
+    plt.bar(lda_sentiment.index.astype(str), lda_sentiment["mean"])
+    plt.xticks(rotation=90)
+    plt.ylabel("Mean Sentiment")
+    plt.xlabel("LDA Topic")
+    plt.title("Average Sentiment by Topic")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "lda_topic_sentiment_means.png"))
     plt.close()
 
     print("[MODEL EVAL]: Plot sentiment distribution by topic.")
@@ -265,3 +282,57 @@ def model_evaluations():
     plt.tight_layout()
     plt.savefig(os.path.join(PLOTS_DIR, "topics_over_time.png"))
     plt.close()
+
+    # Moral v Stylistic style mapping
+    bert_moral_topics = [0, 7, 11, 15, 16]
+    lda_moral_topics = [2,3,4,5]
+    bert_stylistic_topics = [1, 2, 3, 5, 8, 10, 12, 13]
+    lda_stylistic_topics = [1]
+
+    def classify_theme(row):
+        bert_topic = row["bert_topic"]
+        lda_topic = row["lda_topic"]
+
+        bert_moral = bert_topic in bert_moral_topics
+        lda_moral = lda_topic in lda_moral_topics
+
+        bert_stylistic = bert_topic in bert_stylistic_topics
+        lda_stylistic = lda_topic in lda_stylistic_topics
+
+        # Agreement cases
+        if bert_moral and lda_moral:
+            return "moral"
+        elif bert_stylistic and lda_stylistic:
+            return "stylistic"
+
+        # Partial agreement (optional handling)
+        elif bert_moral or lda_moral:
+            return "moral"
+        elif bert_stylistic or lda_stylistic:
+            return "stylistic"
+
+        else:
+            return "other"
+
+    reviews["theme_group"] = reviews.apply(classify_theme, axis=1)
+
+    theme_sentiment = reviews.groupby("theme_group")["roberta_compound"].mean()
+    print(theme_sentiment)
+
+    plt.figure()
+    reviews.boxplot(column="roberta_compound", by="theme_group")
+    plt.title("Sentiment by Theme Type")
+    plt.suptitle("")
+    plt.ylabel("Sentiment Score")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOTS_DIR, "sentiment_by_theme.png"))
+    plt.close()
+
+    # Regression test
+    reviews["moral_binary"] = (reviews["theme_group"] == "moral").astype(int)
+
+    X = sm.add_constant(reviews["moral_binary"])
+    y = reviews["roberta_compound"]
+
+    model = sm.OLS(y, X).fit()
+    print(model.summary())
