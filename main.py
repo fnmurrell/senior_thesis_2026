@@ -46,30 +46,30 @@ def main():
         preprocessor_tokenize()
 
     # Run exploratory data analysis
-    #eda_processor()
+    eda_processor()
 
     # Run VADER sentiment analysis
     if(not os.path.exists("VADER_reviews.json")):
         vader_analysis()
     
     # Run VADER visualizations
-    #vader_visualizer()
+    vader_visualizer()
 
     # Run RoBERTa sentiment analysis
     if(not os.path.exists("RoBERTa_reviews.json")):
         roberta_analysis()
 
     # Run RoBERTa visualizations
-    #roberta_visualizer()
+    roberta_visualizer()
 
     # Compare sentiment models and star ratings
-    #sentiment_comparison()
+    sentiment_comparison()
 
     # Run TF-IDF for semantic similarity analysis
-    #tf_idf_analyzer()
+    tf_idf_analyzer()
 
     # Identify frequency of predefined keywords and themes in dataset 
-    #theme_analyzer()
+    theme_analyzer()
 
     # Run LDA topic modeling
     if(not os.path.exists("LDA_reviews.json")):
@@ -80,7 +80,8 @@ def main():
         bertopic_analyzer()
 
     # Run statistical evaluations
-    model_evaluations()
+    if(not os.path.exists("evaluation_reviews.json")):
+        model_evaluations()
 
 if __name__ == "__main__":
     main()
