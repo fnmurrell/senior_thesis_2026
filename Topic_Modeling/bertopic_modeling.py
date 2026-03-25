@@ -63,19 +63,22 @@ def bertopic_analyzer():
     # Load dataset
     reviews = pd.read_json("LDA_reviews.json")
         
-    # Keep only the lemmatized text column
-    docs = reviews["lemmatized_string"].tolist()
-    dates = pd.to_datetime(reviews["date"])
-        
-    print(f"[BERTopic]: Number of documents: {len(docs)}")
-    
-    # Remove non-meaningful words
+    # Keep only the lemmatized text column and remove non-meaningful words
     custom_stopwords = list(
         text.ENGLISH_STOP_WORDS.union({ 
             "stowe", "harriet", "beecher", "cabin", "toms", "uncle", "book", "author", "novel", "review", "read",
-            "saturday","sunday","monday","tuesday","wednesday","thursday","friday" 
+            "saturday","sunday","monday","tuesday","wednesday","thursday","friday","story","read","write",
+            "not","character"
         }) 
     )
+
+    docs = [
+        " ".join([word for word in doc.split() if word not in custom_stopwords])
+        for doc in reviews["lemmatized_string"].dropna()
+    ]
+    dates = pd.to_datetime(reviews["date"])
+        
+    print(f"[BERTopic]: Number of documents: {len(docs)}")
 
     num_runs = 5
     models = []
@@ -105,7 +108,6 @@ def bertopic_analyzer():
         )
         
         vectorizer_model = CountVectorizer(
-            stop_words=custom_stopwords,
             token_pattern=r"(?u)\b[a-zA-Z]{2,}\b"
         )
 
