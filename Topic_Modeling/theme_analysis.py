@@ -1,31 +1,16 @@
-# Keyword matching:
-#     For each review, check for the presence of your pre-defined keywords/themes.
-#     Count occurrences for each review and aggregate across your dataset.
-# Frequency visualization:
-#     Use bar charts or word clouds to see the most discussed themes.
-
-# TODO -- review for global parameters, like the list of themes
-
 from collections import Counter
 import pandas as pd
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
-def theme_analyzer():
-    print("[Theme Analysis]: Read in final Goodreads dataset and define key themes.")
-    
-    themes = ['slavery', 'oppression', 'racism', 'war', 'morality',
-              'christianity', 'love', 'sacrifice', 'freedom',
-              'women', 'home', 'equality', 'empathy', 'faith', 'race',
-              'family']
-    
+def theme_analyzer(main_themes):
+    print("\n[Theme Analysis]: Read in final Goodreads dataset and define key themes.")    
     reviews = pd.read_json("VADER_reviews.json")[["lemmatized_string"]]
 
     theme_counts = Counter()
 
-    # Corrected loop
     for review in reviews["lemmatized_string"]:
-        for theme in themes:
+        for theme in main_themes:
             if theme in review:
                 theme_counts[theme] += 1
 
@@ -70,4 +55,4 @@ def theme_analyzer():
     )
     plt.close()
 
-    print("[Theme Analysis]: Save theme analysis visualizations to folder.")
+    print("[Theme Analysis]: Saved theme analysis visualizations to Topic_Modeling/plots.")

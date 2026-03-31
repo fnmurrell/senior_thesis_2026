@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from scipy.special import softmax
 
 def roberta_analysis():
-    print("[RoBERTa]: Read in Goodreads reviews after VADER sentiment analysis.")
+    print("\n[RoBERTa]: Read in Goodreads reviews after VADER sentiment analysis.")
     reviews = pd.read_json("VADER_reviews.json")
 
     MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment"
@@ -63,6 +63,4 @@ def roberta_analysis():
 
     # save RoBERTa predicted sentiments to JSON
     print("[RoBERTa]: Save sentiment scores and labels to dataset.")
-    reviews = reviews.to_json("RoBERTa_reviews.json", orient="records") 
-
-    return reviews
+    reviews.to_json("RoBERTa_reviews.json", orient="records", indent=2) 

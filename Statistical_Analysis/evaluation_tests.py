@@ -13,8 +13,8 @@ def cramers_v(chi2, n, r, k):
     return np.sqrt(chi2 / (n * (min(r - 1, k - 1))))
 
 def model_evaluations():
-    print("[MODEL EVAL]: Reading Goodreads dataset.")
-    reviews = pd.read_json("evaluation_reviews.json")
+    print("[Topic Comparison]: Read in final Goodreads dataset.")
+    reviews = pd.read_json("BERTopic_reviews.json")
 
     # Prepare all features for evaluation
     reviews["high_rating"] = (reviews["rating"] >= 4).astype(int)
@@ -25,7 +25,7 @@ def model_evaluations():
     reviews["bert_topic_freq"] = reviews.groupby("bert_topic")["bert_topic"].transform("count")
 
     # Spearman Correlation
-    print("[MODEL EVAL]: Calculate Spearman correlation.")
+    print("\n[Topic Comparison]: Calculate Spearman correlation.")
 
     vader_df = reviews[["VADER_compound", "rating"]].dropna()
     roberta_df = reviews[["roberta_compound", "rating"]].dropna()
@@ -44,11 +44,16 @@ def model_evaluations():
     plt.xlabel("Rating")
     plt.ylabel("Sentiment Score")
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "RoBERTa_sentiment_star_rating.png"))
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/Statistical_Analysis/plots/RoBERTa_sentiment_star_rating.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Understand sentiment model agreement
-    print("[MODEL EVAL]: Calculate sentiment model agreement.")
+    print("\n[Topic Comparison]: Calculate sentiment model agreement.")
     kappa = cohen_kappa_score(reviews["roberta_positive"], reviews["vader_positive"])
 
     # Save result
@@ -58,7 +63,7 @@ def model_evaluations():
     print(f"Cohen's Kappa: {kappa:.4f}")
 
     # Chi-square Tests
-    print("[MODEL EVAL]: Perform Chi-square tests.")
+    print("\n[Topic Comparison]: Perform Chi-square tests.")
 
     def plot_heatmap(table, title, filename):
         plt.figure()
@@ -75,7 +80,12 @@ def model_evaluations():
 
         plt.colorbar()
         plt.tight_layout()
-        plt.savefig(os.path.join(PLOTS_DIR, filename))
+        plt.savefig(
+            os.path.join(PLOTS_DIR, filename),
+            bbox_inches="tight",
+            pad_inches=0.5,
+            dpi=300
+        )
         plt.close()
 
     # RoBERTa sentiment vs rating
@@ -115,7 +125,7 @@ def model_evaluations():
     plot_heatmap(table, "LDA Topic vs RoBERTa Sentiment", "lda_heatmap.png")
 
     # Topic-level sentiment summaries
-    print("[MODEL EVAL]: Topic-level sentiment summaries.")
+    print("\n[Topic Comparison]: Topic-level sentiment summaries.")
 
     bertopic_sentiment = reviews.groupby("bert_topic")["roberta_compound"].agg(["mean", "std", "count"])
     bertopic_sentiment = bertopic_sentiment.sort_values("mean", ascending=False)
@@ -131,7 +141,12 @@ def model_evaluations():
     plt.xlabel("BERTopic Topic")
     plt.title("Average Sentiment by Topic")
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "bert_topic_sentiment_means.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "bert_topic_sentiment_means.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     lda_sentiment = reviews.groupby("lda_topic")["roberta_compound"].agg(["mean", "std", "count"])
@@ -148,10 +163,16 @@ def model_evaluations():
     plt.xlabel("LDA Topic")
     plt.title("Average Sentiment by Topic")
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "lda_topic_sentiment_means.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "lda_topic_sentiment_means.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
-    print("[MODEL EVAL]: Plot sentiment distribution by topic.")
+    # Topic sentiment distributions
+    print("\n[Topic Comparison]: Plot sentiment distribution by topic.")
 
     plt.figure()
     reviews.boxplot(column="roberta_compound", by="bert_topic", rot=90)
@@ -160,11 +181,16 @@ def model_evaluations():
     plt.xlabel("Topic")
     plt.ylabel("Sentiment Score")
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "sentiment_by_topic_boxplot.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "sentiment_by_topic_boxplot.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Logistic Regression (Ratings)
-    print("[MODEL EVAL]: Perform Logistic Regression: Predicting High Rating.")
+    print("\n[Topic Comparison]: Perform Logistic Regression: Predicting High Rating.")
 
     X = reviews[["review_word_count", "lda_prob", "bert_prob"]].copy()
     X = sm.add_constant(X)
@@ -193,11 +219,16 @@ def model_evaluations():
     plt.ylabel("Odds Ratio")
     plt.title("Feature Effects on High Rating")
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "feature_effects_high_rating.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "feature_effects_high_rating.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Logistic Regression (Sentiment)
-    print("[MODEL EVAL]: Perform Logistic Regression: Predicting Sentiment.")
+    print("\n[Topic Comparison]: Perform Logistic Regression: Predicting Sentiment.")
     y_sent = reviews["roberta_positive"].loc[valid_idx]
 
     model_sent = sm.Logit(y_sent, X_clean).fit()
@@ -211,7 +242,7 @@ def model_evaluations():
     print("Accuracy (Sentiment):", accuracy_score(y_sent, pred_labels_sent))
 
     # Correlation Matrix
-    print("[MODEL EVAL]: Calculate Spearman Correlation Matrix.")
+    print("\n[Topic Comparison]: Calculate Spearman Correlation Matrix.")
 
     corr_matrix = reviews[
         ["VADER_compound",
@@ -235,11 +266,16 @@ def model_evaluations():
 
     plt.colorbar()
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "spearman_correlation_matrix.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "spearman_correlation_matrix.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Temporal Analysis
-    print("[MODEL EVAL]: Conduct Temporal Analysis.")
+    print("\n[Topic Comparison]: Conduct Temporal Analysis.")
     reviews["year"] = pd.to_datetime(reviews["date"], errors="coerce").dt.year
 
     roberta_time = reviews.groupby("year")["roberta_compound"].mean()
@@ -252,7 +288,12 @@ def model_evaluations():
     plt.ylabel("Average Sentiment")
     plt.title("RoBERTa Sentiment Over Time")
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "RoBERTa_over_time.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "RoBERTa_over_time.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     plt.figure()
@@ -261,7 +302,12 @@ def model_evaluations():
     plt.ylabel("Average Sentiment")
     plt.title("VADER Sentiment Over Time")
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "VADER_over_time.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "VADER_over_time.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Topics over time
@@ -280,10 +326,16 @@ def model_evaluations():
     plt.ylabel("Year")
     plt.colorbar()
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "topics_over_time.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "topics_over_time.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Moral v Stylistic style mapping
+    print("\n[Topic Comparison]: Moral versus stylistic theme mapping.")
     bert_moral_topics = [0, 7, 11, 15, 16]
     lda_moral_topics = [2,3,4,5]
     bert_stylistic_topics = [1, 2, 3, 5, 8, 10, 12, 13]
@@ -325,10 +377,16 @@ def model_evaluations():
     plt.suptitle("")
     plt.ylabel("Sentiment Score")
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOTS_DIR, "sentiment_by_theme.png"))
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "sentiment_by_theme.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Regression test
+    print("\n[Topic Comparison]: Regression test.")
     reviews["moral_binary"] = (reviews["theme_group"] == "moral").astype(int)
 
     X = sm.add_constant(reviews["moral_binary"])

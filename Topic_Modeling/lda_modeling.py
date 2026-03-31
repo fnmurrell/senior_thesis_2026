@@ -1,5 +1,3 @@
-# TODO -- for future projects, identify tuneable elements and abstract them to main.py
-
 import os
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
@@ -89,8 +87,10 @@ def compute_lda_stability(tf, n_topics, n_runs=5, top_n=10):
     stability = np.mean(stability_scores)
     return stability
 
+# TODO -- for future projects, identify tuneable elements and abstract them to main.py (final number of topics, custom stopwords)
+
 def lda_analyzer():
-    print("[LDA]: Reading Goodreads dataset.")
+    print("\n[LDA]: Read in final Goodreads dataset.")
     reviews = pd.read_json("RoBERTa_reviews.json")
 
     output_dir = "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/"
@@ -140,7 +140,12 @@ def lda_analyzer():
     plt.ylabel("UMass Coherence")
     plt.title("LDA Coherence by Topic Count")
     save_path = os.path.join(output_dir, f"lda_UMass_coherence.png")
-    plt.savefig(save_path, bbox_inches="tight", pad_inches=0.5)
+    plt.savefig(
+        save_path, 
+        bbox_inches="tight", 
+        pad_inches=0.5, 
+        dpi=300
+    )
     plt.close()
 
     # Select top 3 k values by coherence
@@ -178,7 +183,12 @@ def lda_analyzer():
         plt.title(f"LDA Coherence Progression (k={k})")
 
         save_path = os.path.join(output_dir, f"lda_convergence_k_{k}.png")
-        plt.savefig(save_path, bbox_inches="tight", pad_inches=0.5)
+        plt.savefig(
+            save_path, 
+            bbox_inches="tight", 
+            pad_inches=0.5,
+            dpi=300
+        )
         plt.close()
 
         print(f"[LDA]: Saved convergence plot for k={k}")
@@ -191,7 +201,6 @@ def lda_analyzer():
     print("[LDA]: Generating word clouds per topic.")
 
     for topic_idx, topic in enumerate(final_lda.components_):
-
         # Dictionary: word -> weight
         topic_words = {
             feature_names[i]: topic[i]
@@ -212,14 +221,18 @@ def lda_analyzer():
         fig.tight_layout()
 
         save_path = os.path.join(output_dir, f"lda_topic_{topic_idx+1}.png")
-        plt.savefig(save_path, bbox_inches="tight", pad_inches=0.5)
+        plt.savefig(
+            save_path, 
+            bbox_inches="tight", 
+            pad_inches=0.5,
+            dpi=300
+        )
         plt.close()
 
         print(f"[LDA]: Saved: {save_path}")
 
     # Extract representative review excerpts for the identified topics 
     print("[LDA]: Extracting dominant topics for each review.")
-
     doc_topic_dist = final_lda.transform(tf)
 
     # Determine dominant topic and probability
@@ -280,7 +293,12 @@ def lda_analyzer():
     plt.xticks(topic_table["Topic"])
 
     save_path = os.path.join(output_dir, "lda_topic_proportions.png")
-    plt.savefig(save_path, bbox_inches="tight", pad_inches=0.5)
+    plt.savefig(
+        save_path, 
+        bbox_inches="tight", 
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Diversity
@@ -292,5 +310,5 @@ def lda_analyzer():
     print(f"[LDA]: Topic Stability = {stability:.4f}")
 
     # save LDA dominant topics to JSON
-    print("[LDA]: Save topics and topic probability to dataset.")
+    print("[LDA]: Save topics and topic probability to Goodreads dataset.")
     reviews.to_json("LDA_reviews.json", orient="records", indent=2)

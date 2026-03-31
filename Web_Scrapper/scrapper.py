@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 import itertools
 import json
 import time
+import math
 
 def scrape_page(driver):
     # Find all reviews
@@ -50,12 +51,12 @@ def write_to_file(reviews, filename):
         json.dump(reviews, final, indent=2, default=lambda x: list(x) if isinstance(x, tuple) else str(x))
     return print("Data written to JSON.")
 
-NUM_PAGES = 10856 // 30
+#NUM_PAGES = 10856 // 30
 OUTPUT_FILE = "goodreads_reviews.json"
 TIME_SLEEP = 5
-URL = "https://www.goodreads.com/book/show/46787/reviews?reviewFilters=eyJhZnRlciI6Ik9UTXdOeXd4TlRRME16RTNPVFEyTWpReiJ9"
+#URL = "https://www.goodreads.com/book/show/46787/reviews?reviewFilters=eyJhZnRlciI6Ik9UTXdOeXd4TlRRME16RTNPVFEyTWpReiJ9"
 
-def scrape_reviews():
+def scrape_reviews(NUM_PAGES, URL):
     print("[Scrapper]: Scrapping data from GoodReads")
     #  Setup the drive
     driver = webdriver.Firefox()
@@ -68,7 +69,7 @@ def scrape_reviews():
     all_reviews = []
     
     # loop through review pages, scrape data, append, and click button for more reviews
-    for page in range(0,NUM_PAGES):
+    for page in range(math.ceil(NUM_PAGES / 30)):
         all_reviews.append(scrape_page(driver))
         load_next_page(driver)
         time.sleep(TIME_SLEEP)

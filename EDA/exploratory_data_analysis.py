@@ -1,46 +1,12 @@
 import pandas as pd
 from collections import Counter
 import matplotlib.pyplot as plt
-import os
 from datetime import datetime
 from wordcloud import WordCloud
 import seaborn as sns
 
-# Set your base folder once
-BASE_FOLDER = "/home/faith/Documents/Senior_Thesis_2026/EDA/plots"
-os.makedirs(BASE_FOLDER, exist_ok=True)
-
-def save_plot(fig, filename, 
-              folder=BASE_FOLDER, 
-              filetype="png", 
-              dpi=300, 
-              add_timestamp=False):
-    """
-    Save a matplotlib figure cleanly and consistently.
-    
-    Parameters:
-        fig        : matplotlib figure object
-        filename   : base filename (no extension)
-        folder     : save directory
-        filetype   : 'png', 'pdf', 'svg', etc.
-        dpi        : resolution (ignored for pdf/svg)
-        add_timestamp : add datetime to filename
-    """
-    
-    if add_timestamp:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{filename}_{timestamp}"
-    
-    filepath = os.path.join(folder, f"{filename}.{filetype}")
-    
-    fig.savefig(filepath, dpi=dpi, bbox_inches="tight")
-    plt.close(fig)
-    
-    print(f"Saved: {filepath}")
-
 def eda_processor():
-    print("[EDA]: Read in final reviews.")
-
+    print("\n[EDA]: Read in final processed Goodreads reviews.")
     reviews = pd.read_json("goodreads_final_reviews.json")
 
     # Number of reviews per star rating
@@ -48,7 +14,7 @@ def eda_processor():
     rating_counts = reviews['rating'].value_counts()
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(rating_counts.index, rating_counts, color='deeppink')
+    bars = ax.bar(rating_counts.index, rating_counts, color='purple')
     ax.set_title('Number of Reviews per Star Rating')
     ax.set_xlabel('Rating')
     ax.set_ylabel('Number of Reviews')
@@ -65,14 +31,18 @@ def eda_processor():
         )
     fig.tight_layout()
 
-    save_plot(fig, "reviews_by_rating")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/reviews_by_rating.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Number of reviews per year
     print("[EDA]: Number of reviews by year.")
-
-    reviews['date'] = pd.to_datetime(reviews['date'], errors='coerce')  # ensure date is dateime
     reviews['year'] = reviews['date'].dt.year # extract year
-    reviews_per_year = reviews.groupby('year')['comment'].count().sort_index() # count number of reviews (comments) per year
+    reviews_per_year = reviews.groupby('year')['comment'].count().sort_index() # count number of reviews per year
 
     fig, ax = plt.subplots(figsize=(12, 6))
     bars = ax.bar(reviews_per_year.index.astype(str), reviews_per_year.values, color='darkcyan')
@@ -93,7 +63,13 @@ def eda_processor():
         )
     fig.tight_layout()
 
-    save_plot(fig, "reviews_per_year")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/reviews_per_year.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Number of reviews, star rating, and year (track popularity over years)
     print("[EDA]: Number of reviews by year and star rating.")
@@ -125,15 +101,20 @@ def eda_processor():
 
     fig.tight_layout()
 
-    save_plot(fig, "reviews_per_year_by_rating")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/reviews_per_year_by_rating.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Length of review per star rating (did people who liked the book write more or less)
     print("[EDA]: Average word length of review by star rating.")
-
     avg_word_length = reviews.groupby('rating')['review_word_count'].mean()
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(avg_word_length.index, avg_word_length.values, color='lavender')
+    bars = ax.bar(avg_word_length.index, avg_word_length.values, color='gold')
     ax.set_title("Average Review Word Count by Star Rating")
     ax.set_xlabel("Star Rating")
     ax.set_ylabel("Average Word Count")
@@ -149,9 +130,16 @@ def eda_processor():
         )
     fig.tight_layout()
 
-    save_plot(fig, "avg_word_count_by_rating")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/avg_word_count_by_rating.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Create boxplot to show word count distribution
+    print("[EDA]: Analyze word count distributions.")
     fig, ax = plt.subplots(figsize=(12, 6))
 
     reviews.boxplot(column='review_word_count', by='rating', ax=ax)
@@ -161,7 +149,13 @@ def eda_processor():
     plt.suptitle("")
     fig.tight_layout()
 
-    save_plot(fig, "word_count_boxplot_by_rating")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/word_count_boxplot_by_rating.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Find mean and median of review word and character counts
     stats_table = reviews[['review_word_count', 'review_char_count']].agg({
@@ -182,10 +176,15 @@ def eda_processor():
     table.auto_set_font_size(False)
     table.set_fontsize(10)
     table.scale(1.2, 1.2)
-
     fig.tight_layout()
 
-    save_plot(fig, "review_length_statistics")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/review_length_statistics.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Number of reviews, star rating, and number of likes (did people resonate with negative reviews more than positive) 
     print("[EDA]: Average number of likes by star rating.")
@@ -215,9 +214,16 @@ def eda_processor():
         )
     fig.tight_layout()
 
-    save_plot(fig, "avg_likes_by_rating")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/avg_likes_by_rating.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Create boxplot of likes by rating
+    print("[EDA]: Create boxplot of likes by star rating.")
     fig, ax = plt.subplots(figsize=(12,6))
     reviews.boxplot(column='numLikes', by='rating', ax=ax)
     ax.set_title('Distribution of Likes by Star Rating')
@@ -225,56 +231,78 @@ def eda_processor():
     ax.set_ylabel('Number of Likes')
     plt.suptitle("")
     fig.tight_layout()
-    save_plot(fig, "likes_boxplot_by_rating")
+
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/likes_boxplot_by_rating.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Distribution of review lengths - word count
     print("[EDA]: Distribution of review lengths by word count.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(reviews['review_word_count'], bins=30, 
-            color='green', edgecolor='black')
+    ax.hist(reviews['review_word_count'], bins=30, color='purple')
     ax.set_title('Distribution of Review Word Count')
     ax.set_xlabel('Word Count')
     ax.set_ylabel('Frequency')
 
     fig.tight_layout()
 
-    save_plot(fig, "review_word_count_distribution")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/word_count_distro.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Distribution of review lengths - character count
     print("[EDA]: Distribution of review lengths by character count.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(reviews['review_char_count'], bins=30, 
-            color='blue', edgecolor='black')
+    ax.hist(reviews['review_char_count'], bins=30, color='darkcyan')
     ax.set_title('Distribution of Review Character Count')
     ax.set_xlabel('Character Count')
     ax.set_ylabel('Frequency')
 
     fig.tight_layout()
 
-    save_plot(fig, "review_char_count_distribution")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/char_count_distro.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Distribution of number of likes
     print("[EDA]: Distribution of number of likes.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(reviews['numLikes'], bins=10, 
-            color='red', edgecolor='black')
+    ax.hist(reviews['numLikes'], bins=10, color='gold')
     ax.set_title('Distribution of Likes')
     ax.set_xlabel('Likes')
     ax.set_ylabel('Frequency')
 
     fig.tight_layout()
 
-    save_plot(fig, "likes_distribution")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/likes_distro.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Review length by number of likes (Do longer reviews get more likes?)
     fig, ax = plt.subplots(figsize=(12,6))
-    colors = {1:'red', 2:'orange', 3:'yellow', 4:'green', 5:'blue'}
+    colors = {1:'gray', 2:'purple', 3:'darkcyan', 4:'gold', 5:'red'}
     for rating in sorted(reviews['rating'].dropna().unique()):
         subset = reviews[reviews['rating']==rating]
-        ax.scatter(subset['review_word_count'], subset['numLikes'], 
+        ax.scatter(subset['review_word_count'], subset['numLikes'],  
                 alpha=0.5, c=colors[rating], label=f'{rating} Stars')
 
     ax.set_xlabel('Word Count')
@@ -282,7 +310,14 @@ def eda_processor():
     ax.set_title('Likes vs. Review Length by Rating')
     ax.legend(title='Star Rating')
     fig.tight_layout()
-    save_plot(fig, "likes_vs_review_length")
+
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/likes_v_length.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # word frequency plots 
     print("[EDA]: 50 most frequent words in user reviews by word type (i.e., noun, verb).")
@@ -308,7 +343,7 @@ def eda_processor():
     freqs = [c for w, c in top_adj]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(words, freqs, color='mediumvioletred')
+    bars = ax.bar(words, freqs, color='purple')
 
     ax.set_title("Top 50 Most Frequent Adjectives")
     ax.set_xlabel("Adjective")
@@ -327,7 +362,13 @@ def eda_processor():
         )
     fig.tight_layout()
 
-    save_plot(fig, "adj_word_freq")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/adj_word_freq.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Create noun graph
     top_noun = noun_counts.most_common(50)
@@ -335,7 +376,7 @@ def eda_processor():
     freqs = [c for w, c in top_noun]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(words, freqs, color='sandybrown')
+    bars = ax.bar(words, freqs, color='darkcyan')
 
     ax.set_xlabel("Noun")
     ax.set_ylabel("Frequency")
@@ -354,7 +395,13 @@ def eda_processor():
         )
     fig.tight_layout()
 
-    save_plot(fig, "noun_word_freq")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/noun_word_freq.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Create verb graph
     top_verb = verb_counts.most_common(50)
@@ -362,7 +409,7 @@ def eda_processor():
     freqs = [c for w, c in top_verb]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(words, freqs, color='darkmagenta')
+    bars = ax.bar(words, freqs, color='gold')
 
     ax.set_xlabel("Verb")
     ax.set_ylabel("Frequency")
@@ -381,7 +428,13 @@ def eda_processor():
         )
     fig.tight_layout()
 
-    save_plot(fig, "verb_word_freq")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/verb_word_freq.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Create adverb graph
     top_adv = adv_counts.most_common(50)
@@ -389,7 +442,7 @@ def eda_processor():
     freqs = [c for w, c in top_adv]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(words, freqs, color='darkseagreen')
+    bars = ax.bar(words, freqs, color='red')
 
     ax.set_xlabel("Adverb")
     ax.set_ylabel("Frequency")
@@ -408,35 +461,68 @@ def eda_processor():
         )
     fig.tight_layout()
 
-    save_plot(fig, "adv_word_freq")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/adv_word_freq.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # word cloud of nouns
     print("[EDA]: Word cloud of common nouns used in reviews.")
 
     text = " ".join(nouns)
-    wc = WordCloud(width=800, height=400, background_color='white').generate(text)
+    wc = WordCloud(
+        width=800, 
+        height=400, 
+        background_color='white'
+        ).generate(text)
 
     fig, ax = plt.subplots(figsize=(12,6))
     ax.imshow(wc, interpolation='bilinear')
     ax.axis('off')
     fig.tight_layout()
-    save_plot(fig, "nouns_wordcloud")
+
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/nouns_wordcloud.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Show rating vs. year in a heatmap for visual trends
     print("[EDA]: Heatmap of rating v. year.")
-
-    rating_year = reviews.pivot_table(index='year', columns='rating', 
-                                    values='comment', aggfunc='count', fill_value=0)
+    rating_year = reviews.pivot_table(
+        index='year', 
+        columns='rating', 
+        values='comment', 
+        aggfunc='count', 
+        fill_value=0)
 
     fig, ax = plt.subplots(figsize=(12,6))
     sns.heatmap(rating_year, annot=True, fmt="d", cmap="YlGnBu", ax=ax)
     ax.set_title("Number of Reviews by Year and Rating")
-    save_plot(fig, "reviews_year_rating_heatmap")
+
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/reviews_year_rating_heatmap.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     # Correlate review_word_count, review_char_count, numLikes, rating
     pairgrid = sns.pairplot(reviews[['review_word_count', 'review_char_count', 'numLikes', 'rating']])
     pairgrid.fig.suptitle("Pairwise Relationships", y=1.02)  # set title
 
-    save_plot(pairgrid.fig, "pairwise_relationships")
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/pairwise_graph.png",
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
 
     print("All graphs saved to EDA/plots.")

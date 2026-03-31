@@ -1,36 +1,36 @@
 import pandas as pd
+import hashlib
+
+def generate_review_id(text):
+    return hashlib.md5(text.encode('utf-8')).hexdigest()
 
 def preprocessor_datachecks():
-    reviews = pd.read_json("goodreads_eng_only_reviews.json")
-    reviews = reviews.drop('language', axis=1)
-    print("[Pre-Processor]: The number of Goodreads reviews after filtering to English only:", len(reviews))
-    
-    # Count reviews with rating = None
-    print("[Pre-Processor]: Find reviews with no rating.")
-    no_rating = reviews[reviews['rating'].isna()]
-    print(no_rating.count())
+    print("\n[Pre-Processor]: Read in English only Goodreads reviews.")
+    reviews = pd.read_json("goodreads_eng_only_reviews.json").drop('language', axis=1)
 
-    print("[Pre-Processor]: Check any missing users.")
-    # Count reviews with user = None
-    no_user = reviews[reviews['user'].isna()]
-    print(no_user.count())
+    # Create stable unique ID based on review text
+    review_ids = reviews['comment'].apply(generate_review_id)
+    reviews.insert(0, 'review_id', review_ids)
 
-    print("[Pre-Processor]: Check any missing reviews.")
-    # Count reviews with comment = None
-    no_review = reviews[reviews['comment'].isna()]
-    print(no_review.count())
+    # Rating: integer
+    reviews['rating'] = pd.to_numeric(reviews['rating'], errors='coerce').astype('Int64')
 
-    print("[Pre-Processor]: Check any missing dates.")
-    # Count reviews with date = None
-    no_date = reviews[reviews['date'].isna()]
-    print(no_date.count())
+    # Comment: string
+    reviews['comment'] = reviews['comment'].astype(str)
 
-    print("[Pre-Processor]: Check any missing likes.")
-    # Count reviews with likes = None
-    no_like = reviews[reviews['likes'].isna()]
-    print(no_date.count())
+    # Date: datetime
+    reviews['date'] = pd.to_datetime(reviews['date'], errors='coerce')
+
+    # Likes: integer
+    print("[Pre-Processor]: Separate number of likes into separate column.")
+
+    reviews[['numLikes', 'likes']] = reviews['likes'].str.split(' ', expand=True)
+    reviews['numLikes'] = pd.to_numeric(reviews['numLikes'], errors='coerce').astype('Int64')
+
+    print("[Pre-Processor]: Check column types after conversions.\n", reviews.dtypes)
+
+    # Check that only rating and likes can have null values
+    print("[Pre-Processor]: Find any reviews with missing values:\n", reviews.isna().sum())
 
     # Saving checked dataset to JSON.
-    checked_reviews = reviews.to_json("goodreads_checked_reviews.json", orient="records") 
-    
-    return checked_reviews
+    reviews.to_json("goodreads_checked_reviews.json", orient="records", indent=2) 

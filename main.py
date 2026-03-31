@@ -19,29 +19,28 @@ import pandas as pd
 import os
 
 def main():
-    # TODO Add a request for grabbing a url and NUM_PAGES.
     # TODO Create a directory for a given url. -- Ask for title of book
-    # TODO Run the processing steps where the generated files do not exist.
     # TODO Figure out how to parameterize the visualization pieces of the pipeline
-    # TODO Create a script that assigns a unique identifier to each review in the dataset.
 
     # Scrape The Web
     if(not os.path.exists("goodreads_reviews.json")):
-        scrape_reviews()
+        NUM_PAGES = input("Enter the total number of Goodreads reviews for analysis: \n")
+        URL = input("Paste the URL that directs to all community reviews for the book on Goodreads: \n")
+        scrape_reviews(int(NUM_PAGES), URL)
     
     # Run the Pre-Processor to remove Non-English
     if(not os.path.exists("goodreads_eng_only_reviews.json")):
         preprocessor_find_english_reviews()
 
-    # Run the Pre-Processor for data quality 
+    # Run the Pre-Processor for checking missing values and data types
     if(not os.path.exists("goodreads_checked_reviews.json")):
         preprocessor_datachecks()
     
-    # Run the rest of Pre-Processing
+    # Run the Pre-Processor for cleaning up review text
     if(not os.path.exists("goodreads_cleaned_reviews.json")):
         preprocessor_general()
 
-    # Run the final NLTK Pre-Processing
+    # Run the Pre-Processor for NLTK tokenization and lemmatization
     if(not os.path.exists("goodreads_final_reviews.json")):
         preprocessor_tokenize()
 
@@ -69,7 +68,10 @@ def main():
     tf_idf_analyzer()
 
     # Identify frequency of predefined keywords and themes in dataset 
-    theme_analyzer()
+    main_themes = input("Enter a list of themes you want to analyze in reviews, separated by commas: ")
+    main_themes = [theme.strip() for theme in main_themes.split(",")]
+
+    theme_analyzer(main_themes)
 
     # Run LDA topic modeling
     if(not os.path.exists("LDA_reviews.json")):
@@ -80,8 +82,7 @@ def main():
         bertopic_analyzer()
 
     # Run statistical evaluations
-    if(not os.path.exists("evaluation_reviews.json")):
-        model_evaluations()
+    model_evaluations()
 
 if __name__ == "__main__":
     main()

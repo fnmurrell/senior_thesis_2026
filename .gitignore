@@ -9,8 +9,6 @@ RoBERTa_reviews.json
 LDA_reviews.json
 BERTopic_reviews.json
 evaluation_reviews.json
-JSON.py
-count.py
-non-ascii.py
+general_cleanup.py
 sentiment_distribution.csv
 *__pycache__

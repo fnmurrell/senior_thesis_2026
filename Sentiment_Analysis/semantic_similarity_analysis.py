@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def tf_idf_analyzer():
-    print("[TF-IDF]: Read in Goodreads dataset.")
+    print("\n[TF-IDF]: Read in final Goodreads dataset.")
     reviews = pd.read_json("VADER_reviews.json")[["lemmatized_string"]]
 
     vectorizer = TfidfVectorizer()
@@ -58,6 +58,6 @@ def tf_idf_analyzer():
         pad_inches=0.5,
         dpi=300
     )
-
     plt.close()
+    
     print("[TF-IDF]: Similarity scores saved to folder.")

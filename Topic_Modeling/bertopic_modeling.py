@@ -57,10 +57,10 @@ def compute_topic_diversity(topic_model, top_k=10):
 
     return diversity
 
+# TODO -- for future projects, identify tuneable elements and abstract them to main.py (final number of topics, custom stopwords)
+
 def bertopic_analyzer():
-    print("[BERTopic]: Reading Goodreads dataset.")
-    
-    # Load dataset
+    print("\n[BERTopic]: Read in final Goodreads dataset.")
     reviews = pd.read_json("LDA_reviews.json")
         
     # Keep only the lemmatized text column and remove non-meaningful words
@@ -211,7 +211,6 @@ def bertopic_analyzer():
     fig.write_html("/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_map.html")
 
     # Visualize a barchart of selected topics
-    # topic_model._create_topic_vectors()
     fig = topic_model.visualize_barchart()
     fig.write_html("/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_barchart.html")
 
@@ -234,8 +233,12 @@ def bertopic_analyzer():
     plt.title("BERTopic Topic Proportions")
     plt.xticks(topic_table["Topic"])
 
-    save_path = "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_topic_proportions.png"
-    plt.savefig(save_path, bbox_inches="tight", pad_inches=0.5)
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_topic_proportions.png", 
+        bbox_inches="tight", 
+        pad_inches=0.5,
+        dpi=300
+    )
     plt.close()
 
     # Generate and save wordclouds for identified topics
@@ -259,7 +262,12 @@ def bertopic_analyzer():
         plt.title(f"BERTopic Topic {topic}")
 
         save_path = f"/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_topic_{topic}.png"
-        plt.savefig(save_path, bbox_inches="tight", pad_inches=0.5)
+        plt.savefig(
+            save_path, 
+            bbox_inches="tight", 
+            pad_inches=0.5,
+            dpi=300
+        )
         plt.close()
 
     # Identify representative reviews for each topic
@@ -291,5 +299,5 @@ def bertopic_analyzer():
                 f.write(f"{row['lemmatized_string'][:400]}\n\n")
     
     # save BERTopic topics and probabilities to JSON
-    print("[BERTopic]: Save topics and topic probability to dataset.")
+    print("[BERTopic]: Save topics and topic probability to Goodreads dataset.")
     reviews.to_json("BERTopic_reviews.json", orient="records", indent=2)
