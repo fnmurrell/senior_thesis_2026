@@ -14,7 +14,7 @@ def cramers_v(chi2, n, r, k):
 
 def model_evaluations():
     print("[Topic Comparison]: Read in final Goodreads dataset.")
-    reviews = pd.read_json("BERTopic_reviews.json")
+    reviews = pd.read_json("evaluation_reviews.json")
 
     # Prepare all features for evaluation
     reviews["high_rating"] = (reviews["rating"] >= 4).astype(int)
@@ -318,22 +318,6 @@ def model_evaluations():
 
     print(f"Topics Over Time χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
 
-    # Topics over time heatmap
-    plt.figure()
-    plt.imshow(table, aspect='auto')
-    plt.title("Topics Over Time")
-    plt.xlabel("Topic")
-    plt.ylabel("Year")
-    plt.colorbar()
-    plt.tight_layout()
-    plt.savefig(
-        os.path.join(PLOTS_DIR, "topics_over_time.png"),
-        bbox_inches="tight",
-        pad_inches=0.5,
-        dpi=300
-    )
-    plt.close()
-
     # Moral v Stylistic style mapping
     print("\n[Topic Comparison]: Moral versus stylistic theme mapping.")
     bert_moral_topics = [0, 7, 11, 15, 16]
@@ -379,6 +363,51 @@ def model_evaluations():
     plt.tight_layout()
     plt.savefig(
         os.path.join(PLOTS_DIR, "sentiment_by_theme.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
+
+    # Graph topics over time 
+    theme_time = pd.crosstab(reviews["year"], reviews["theme_group"])
+    theme_time = theme_time.sort_index()
+
+    plt.figure()
+
+    for theme in theme_time.columns:
+        plt.plot(theme_time.index, theme_time[theme], marker='o', label=theme.capitalize())
+
+    plt.title("Theme Trends Over Time")
+    plt.xlabel("Year")
+    plt.ylabel("Number of Reviews")
+    plt.legend()
+    plt.tight_layout()
+
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "themes_over_time.png"),
+        bbox_inches="tight",
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
+
+    # Proportion of themes over time
+    theme_time_pct = theme_time.div(theme_time.sum(axis=1), axis=0)
+
+    plt.figure()
+
+    for theme in theme_time_pct.columns:
+        plt.plot(theme_time_pct.index, theme_time_pct[theme], marker='o', label=theme.capitalize())
+
+    plt.title("Proportion of Themes Over Time")
+    plt.xlabel("Year")
+    plt.ylabel("Proportion of Reviews")
+    plt.legend()
+    plt.tight_layout()
+
+    plt.savefig(
+        os.path.join(PLOTS_DIR, "themes_over_time_proportion.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
