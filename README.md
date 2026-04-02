@@ -41,15 +41,17 @@ Each step of the process will print a comment that starts with the phase. For ex
 
 3. Access visualizations in the plots subfolders (see File Structure above).
 
-# Technical Documentation -- IN PROGRESS
-## Flowcharts of the Project Pipeline
-![Data Preprocessing](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Data_Preprocessing_Flowchart.png "Steps of the data preprocessing phase")
-![Sentiment Analysis](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Sentiment_Analysis_Flowchart.png "Steps of the sentiment analysis phase")
-![Topic Modeling](/home/faith/Documents/Senior_Thesis_2026/Technical_Documentation/Topic_Modeling_Flowchart.png "Steps of the topic modeling phase")
+# Technical Documentation
 
--- adding another process flow for Statistical Analysis 
+All technical documentaon can be found in the folder by the same name. 
+
+## Flowcharts of the Project Pipeline
+
+- Data Preprocessing: Steps of the data preprocessing phase
+- Sentiment Analysis: Steps of the sentiment analysis phase
+- Topic Modeling: Steps of the topic modeling phase
 
 ## Database & Architecture Design
 
-- basic database design/diagram 
-- general architecture diagram (in progress)
+- Basic database design 
+- General architecture diagram

@@ -9,7 +9,7 @@ def non_ascii_chars(text):
 
 def preprocessor_general():
     print("\n[Pre-Processor]: Read in quality checked Goodreads reviews.")
-    reviews = pd.read_json("goodreads_checked_reviews.json")
+    reviews = pd.read_json("goodreads_checked_reviews.json").drop('likes', axis=1)
 
     # Convert the 'comment' column to lowercase
     print("[Pre-Processor]: Lowercase the review comments.")

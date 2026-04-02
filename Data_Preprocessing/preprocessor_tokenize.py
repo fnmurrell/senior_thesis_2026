@@ -14,7 +14,7 @@ nltk.download('averaged_perceptron_tagger_eng')
 
 def preprocessor_tokenize():
     print("\n[Pre-Processor]: Read in cleaned Goodreads reviews.")
-    reviews = pd.read_json("goodreads_cleaned_reviews.json").drop('likes', axis=1)
+    reviews = pd.read_json("goodreads_cleaned_reviews.json")
 
     # tokenize review text using NLTK
     print("[Pre-Processor]: Tokenize review text.")

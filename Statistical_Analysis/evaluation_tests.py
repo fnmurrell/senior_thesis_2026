@@ -33,8 +33,9 @@ def model_evaluations():
     corr_vader, p_vader = spearmanr(vader_df["VADER_compound"], vader_df["rating"])
     corr_roberta, p_roberta = spearmanr(roberta_df["roberta_compound"], roberta_df["rating"])
 
-    print(f"VADER: rho={corr_vader:.3f}, p={p_vader:.3e}")
-    print(f"RoBERTa: rho={corr_roberta:.3f}, p={p_roberta:.3e}")
+    with open(os.path.join(PLOTS_DIR, "spearman_results.txt"), "w") as f:
+        f.write(f"VADER: rho={corr_vader:.3f}, p={p_vader:.3e}\n")
+        f.write(f"RoBERTa: rho={corr_roberta:.3f}, p={p_roberta:.3e}")
 
     # Sentiment vs Rating (boxplot)
     plt.figure()
@@ -59,8 +60,6 @@ def model_evaluations():
     # Save result
     with open(os.path.join(PLOTS_DIR, "cohens_kappa.txt"), "w") as f:
         f.write(f"Cohen's Kappa: {kappa:.4f}")
-
-    print(f"Cohen's Kappa: {kappa:.4f}")
 
     # Chi-square Tests
     print("\n[Topic Comparison]: Perform Chi-square tests.")
@@ -103,7 +102,9 @@ def model_evaluations():
     n = table.values.sum()
     r, k = table.shape
 
-    print(f"VADER χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+    # Save results
+    with open(os.path.join(PLOTS_DIR, "chi_square_roberta.txt"), "w") as f:
+        f.write(f"VADER χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
     plot_heatmap(table, "VADER Sentiment vs High Rating", "vader_heatmap.png")
 
     # BERTopic vs sentiment
@@ -112,7 +113,9 @@ def model_evaluations():
     n = table.values.sum()
     r, k = table.shape
 
-    print(f"BERTopic χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+    # Save results
+    with open(os.path.join(PLOTS_DIR, "chi_square_roberta.txt"), "w") as f:
+        f.write(f"BERTopic χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
     plot_heatmap(table, "BERTopic vs RoBERTa Sentiment", "bertopic_heatmap.png")
 
     # LDA topic vs sentiment
@@ -121,7 +124,9 @@ def model_evaluations():
     n = table.values.sum()
     r, k = table.shape
 
-    print(f"LDA χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+    # Save results
+    with open(os.path.join(PLOTS_DIR, "chi_square_roberta.txt"), "w") as f:
+        f.write(f"LDA χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
     plot_heatmap(table, "LDA Topic vs RoBERTa Sentiment", "lda_heatmap.png")
 
     # Topic-level sentiment summaries
@@ -201,16 +206,20 @@ def model_evaluations():
     y_clean = y.loc[valid_idx]
 
     model = sm.Logit(y_clean, X_clean).fit()
-    print(model.summary())
+    # Save results
+    with open(os.path.join(PLOTS_DIR, "logit_high_rating_summary.txt"), "w") as f:
+        f.write(model.summary().as_text())
 
     # Odds ratios
     odds_ratios = np.exp(model.params)
-    print("Odds Ratios:\n", odds_ratios)
+    odds_ratios.to_csv(os.path.join(PLOTS_DIR, "odds_ratios_high_rating.csv"))
 
     # Accuracy
     preds = model.predict(X_clean)
     pred_labels = (preds >= 0.5).astype(int)
-    print("Accuracy:", accuracy_score(y_clean, pred_labels))
+    # Save results
+    with open(os.path.join(PLOTS_DIR, "logit_accuracy.txt"), "w") as f:
+        f.write(f"Accuracy (Rating): {accuracy_score(y_clean, pred_labels):.4f}")
 
     # Odds ratios
     plt.figure()
@@ -232,14 +241,18 @@ def model_evaluations():
     y_sent = reviews["roberta_positive"].loc[valid_idx]
 
     model_sent = sm.Logit(y_sent, X_clean).fit()
-    print(model_sent.summary())
+    # Save results
+    with open(os.path.join(PLOTS_DIR, "logit_sentiment_summary.txt"), "w") as f:
+        f.write(model_sent.summary().as_text())
 
     odds_ratios_sent = np.exp(model_sent.params)
-    print("Odds Ratios (Sentiment):\n", odds_ratios_sent)
+    odds_ratios_sent.to_csv(os.path.join(PLOTS_DIR, "odds_ratios_sentiment.csv"))
 
     preds_sent = model_sent.predict(X_clean)
     pred_labels_sent = (preds_sent >= 0.5).astype(int)
-    print("Accuracy (Sentiment):", accuracy_score(y_sent, pred_labels_sent))
+    # Save results
+    with open(os.path.join(PLOTS_DIR, "sentiment_accuracy.txt"), "w") as f:
+        f.write(f"Accuracy (Sentiment): {accuracy_score(y_sent, pred_labels_sent):.4f}")
 
     # Correlation Matrix
     print("\n[Topic Comparison]: Calculate Spearman Correlation Matrix.")
@@ -273,6 +286,9 @@ def model_evaluations():
         dpi=300
     )
     plt.close()
+
+    # Save results
+    corr_matrix.to_csv(os.path.join(PLOTS_DIR, "spearman_correlation_matrix.csv"))
 
     # Temporal Analysis
     print("\n[Topic Comparison]: Conduct Temporal Analysis.")
@@ -316,7 +332,17 @@ def model_evaluations():
     n = table.values.sum()
     r, k = table.shape
 
-    print(f"Topics Over Time χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
+    # Save results
+    table.to_csv(os.path.join(PLOTS_DIR, "topics_over_time_table.csv"))
+    with open(os.path.join(PLOTS_DIR, "topics_over_time_stats.txt"), "w") as f:
+        f.write(
+            f"Chi-square test: Topics over time\n"
+            f"Chi2 = {chi2:.4f}\n"
+            f"p-value = {p:.6e}\n"
+            f"Degrees of freedom = {dof}\n"
+            f"Cramer's V = {cramers:.4f}\n"
+            f"Sample size (n) = {n}\n"
+        )
 
     # Moral v Stylistic style mapping
     print("\n[Topic Comparison]: Moral versus stylistic theme mapping.")
@@ -353,7 +379,7 @@ def model_evaluations():
     reviews["theme_group"] = reviews.apply(classify_theme, axis=1)
 
     theme_sentiment = reviews.groupby("theme_group")["roberta_compound"].mean()
-    print(theme_sentiment)
+    theme_sentiment.to_csv(os.path.join(PLOTS_DIR, "theme_sentiment.csv"))
 
     plt.figure()
     reviews.boxplot(column="roberta_compound", by="theme_group")
@@ -422,4 +448,6 @@ def model_evaluations():
     y = reviews["roberta_compound"]
 
     model = sm.OLS(y, X).fit()
-    print(model.summary())
+    # Save results
+    with open(os.path.join(PLOTS_DIR, "ols_theme_sentiment.txt"), "w") as f:
+        f.write(model.summary().as_text())
