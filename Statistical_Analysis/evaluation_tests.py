@@ -14,7 +14,7 @@ def cramers_v(chi2, n, r, k):
 
 def model_evaluations():
     print("[Topic Comparison]: Read in final Goodreads dataset.")
-    reviews = pd.read_json("evaluation_reviews.json")
+    reviews = pd.read_json("BERTopic_reviews.json")
 
     # Prepare all features for evaluation
     reviews["high_rating"] = (reviews["rating"] >= 4).astype(int)
