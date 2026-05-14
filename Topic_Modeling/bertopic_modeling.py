@@ -62,23 +62,13 @@ def compute_topic_diversity(topic_model, top_k=10):
 def bertopic_analyzer():
     print("\n[BERTopic]: Read in final Goodreads dataset.")
     reviews = pd.read_json("LDA_reviews.json")
-        
-    # Keep only the lemmatized text column and remove non-meaningful words
-    custom_stopwords = list(
-        text.ENGLISH_STOP_WORDS.union({ 
-            "stowe", "harriet", "beecher", "cabin", "toms", "uncle", "book", "author", "novel", "review", "read",
-            "saturday","sunday","monday","tuesday","wednesday","thursday","friday","story","read","write",
-            "not","character"
-        }) 
-    )
 
     docs = [
-        " ".join([word for word in doc.split() if word not in custom_stopwords])
+        " ".join([word for word in doc.split()])
         for doc in reviews["lemmatized_string"].dropna()
     ]
-    dates = pd.to_datetime(reviews["date"])
         
-    print(f"[BERTopic]: Number of documents: {len(docs)}")
+    print(f"\n[BERTopic]: Number of documents: {len(docs)}")
 
     num_runs = 5
     models = []
@@ -177,19 +167,19 @@ def bertopic_analyzer():
 
     stability = np.mean(stability_scores)
 
-    print(f"[BERTopic]: Topic Stability = {stability:.4f}")
+    print(f"\n[BERTopic]: Topic Stability = {stability:.4f}")
 
     # Select the final model 
-    print("[BERTopic]: Selecting best model based on coherence.")
+    print("\n[BERTopic]: Selecting best model based on coherence.")
     best_index = np.argmax(coherences)
 
     topic_model = models[best_index]
     topics = run_topics[best_index]
     probs = run_probs[best_index]
 
-    print(f"[BERTopic]: Selected run {best_index+1}")
-    print(f"[BERTopic]: Best Coherence = {coherences[best_index]:.4f}")
-    print(f"[BERTopic]: Diversity = {diversities[best_index]:.4f}")
+    print(f"\n[BERTopic]: Selected run {best_index+1}")
+    print(f"\n[BERTopic]: Best Coherence = {coherences[best_index]:.4f}")
+    print(f"\n[BERTopic]: Diversity = {diversities[best_index]:.4f}")
 
     # Reduce / merge similar topics
     topics = topic_model.reduce_outliers(docs, topics)
@@ -242,7 +232,7 @@ def bertopic_analyzer():
     plt.close()
 
     # Generate and save wordclouds for identified topics
-    print("[BERTopic]: Generating word clouds per topic.")
+    print("\n[BERTopic]: Generate word clouds per topic.")
 
     for topic in topic_model.get_topics():
         if topic == -1:
@@ -271,7 +261,7 @@ def bertopic_analyzer():
         plt.close()
 
     # Identify representative reviews for each topic
-    print("[BERTopic]: Extracting representative review excerpts.")
+    print("\n[BERTopic]: Extract representative review excerpts.")
 
     if topic_model.probabilities_ is not None:
         reviews["bert_prob"] = topic_model.probabilities_.max(axis=1)
@@ -299,5 +289,5 @@ def bertopic_analyzer():
                 f.write(f"{row['lemmatized_string'][:400]}\n\n")
     
     # save BERTopic topics and probabilities to JSON
-    print("[BERTopic]: Save topics and topic probability to Goodreads dataset.")
+    print("\n[BERTopic]: Save topics and topic probability to Goodreads dataset.")
     reviews.to_json("BERTopic_reviews.json", orient="records", indent=2)

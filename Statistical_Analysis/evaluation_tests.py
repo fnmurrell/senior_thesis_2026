@@ -13,7 +13,7 @@ def cramers_v(chi2, n, r, k):
     return np.sqrt(chi2 / (n * (min(r - 1, k - 1))))
 
 def model_evaluations():
-    print("[Topic Comparison]: Read in final Goodreads dataset.")
+    print("\n[Topic Comparison]: Read in final Goodreads dataset.")
     reviews = pd.read_json("BERTopic_reviews.json")
 
     # Prepare all features for evaluation

@@ -96,17 +96,10 @@ def lda_analyzer():
     output_dir = "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/"
     os.makedirs(output_dir, exist_ok=True)
 
-    custom_stopwords = list(
-        text.ENGLISH_STOP_WORDS.union({
-            "stowe", "harriet", "beecher", "cabin", "toms", "uncle", "book", "author", "novel", "review", "read"
-        })
-    )
-
     tf_vectorizer = CountVectorizer(
         max_df=0.80,
         min_df=2,
         max_features=1000,
-        stop_words=custom_stopwords,
         tokenizer=lambda x: x.split(),
         lowercase=False
     )
@@ -117,7 +110,7 @@ def lda_analyzer():
     topic_range = range(5, 21, 5)
     coherence_values = []
 
-    print("[LDA]: Evaluating coherence across topic counts.")
+    print("\n[LDA]: Evaluating coherence across topic counts.")
 
     for k in topic_range:
         lda = LatentDirichletAllocation(
@@ -135,6 +128,7 @@ def lda_analyzer():
         print(f"Topics: {k}, Coherence: {score:.4f}")
 
     # Plot coherence
+    print("\n[LDA]: Graph topic coherence.")
     plt.plot(topic_range, coherence_values)
     plt.xlabel("Number of Topics")
     plt.ylabel("UMass Coherence")
@@ -153,7 +147,7 @@ def lda_analyzer():
     top_3_indices = sorted_indices[:3]
     top_3_k = [topic_range[i] for i in top_3_indices]
 
-    print(f"[LDA]: Top 3 topic counts by coherence: {top_3_k}")
+    print(f"\n[LDA]: Top 3 topic counts by coherence: {top_3_k}")
 
     # Fit and evaluate each of the top 3 models
     for k in top_3_k:
@@ -198,7 +192,7 @@ def lda_analyzer():
             final_lda = lda
             best_k = k
 
-    print("[LDA]: Generating word clouds per topic.")
+    print("\n[LDA]: Generate word clouds per topic.")
 
     for topic_idx, topic in enumerate(final_lda.components_):
         # Dictionary: word -> weight
@@ -232,14 +226,14 @@ def lda_analyzer():
         print(f"[LDA]: Saved: {save_path}")
 
     # Extract representative review excerpts for the identified topics 
-    print("[LDA]: Extracting dominant topics for each review.")
+    print("\n[LDA]: Extract dominant topics for each review.")
     doc_topic_dist = final_lda.transform(tf)
 
     # Determine dominant topic and probability
     reviews["lda_topic"] = np.argmax(doc_topic_dist, axis=1)
     reviews["lda_prob"] = np.max(doc_topic_dist, axis=1)
 
-    print("[LDA]: Extracting representative review excerpts.")
+    print("\n[LDA]: Extract representative review excerpts.")
     top_n = 5
 
     for topic in range(best_k):
@@ -272,7 +266,7 @@ def lda_analyzer():
             for _, row in topic_reviews.iterrows():
                 f.write(f"{row['lemmatized_string'][:400]}\n\n")
 
-    print("[LDA]: Determine topic proportions.")
+    print("\n[LDA]: Determine topic proportions.")
     topic_counts = reviews["lda_topic"].value_counts().sort_index()
     topic_proportions = topic_counts / topic_counts.sum()
 
@@ -289,7 +283,6 @@ def lda_analyzer():
     plt.xlabel("Topic")
     plt.ylabel("Proportion of Reviews")
     plt.title("LDA Topic Proportions")
-
     plt.xticks(topic_table["Topic"])
 
     save_path = os.path.join(output_dir, "lda_topic_proportions.png")
@@ -303,12 +296,12 @@ def lda_analyzer():
 
     # Diversity
     diversity = compute_topic_diversity_lda(final_lda, top_n=10)
-    print(f"[LDA]: Topic Diversity = {diversity:.4f}")
+    print(f"\n[LDA]: Topic Diversity = {diversity:.4f}")
 
     # Stability (optional: 5 runs)
     stability = compute_lda_stability(tf, n_topics=best_k, n_runs=5, top_n=10)
-    print(f"[LDA]: Topic Stability = {stability:.4f}")
+    print(f"\n[LDA]: Topic Stability = {stability:.4f}")
 
     # save LDA dominant topics to JSON
-    print("[LDA]: Save topics and topic probability to Goodreads dataset.")
+    print("\n[LDA]: Save topics and topic probability to Goodreads dataset.")
     reviews.to_json("LDA_reviews.json", orient="records", indent=2)

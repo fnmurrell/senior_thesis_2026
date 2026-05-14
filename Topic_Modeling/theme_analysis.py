@@ -5,7 +5,7 @@ from wordcloud import WordCloud
 
 def theme_analyzer(main_themes):
     print("\n[Theme Analysis]: Read in final Goodreads dataset and define key themes.")    
-    reviews = pd.read_json("VADER_reviews.json")[["lemmatized_string"]]
+    reviews = pd.read_json("RoBERTa_reviews.json")[["lemmatized_string"]]
 
     theme_counts = Counter()
 
@@ -20,6 +20,7 @@ def theme_analyzer(main_themes):
     ).sort_values(by="Frequency", ascending=False)
 
     # Generate bar chart
+    print("\n[Theme Analysis]: Generate bar chart.")
     plt.figure(figsize=(10, 6))
     plt.bar(theme_frequency["Theme"], theme_frequency["Frequency"])
     plt.xticks(rotation=45)
@@ -36,6 +37,7 @@ def theme_analyzer(main_themes):
     plt.close()
 
     # Generate wordcloud
+    print("\n[Theme Analysis]: Generate wordcloud.")
     wordcloud = WordCloud(
         width=1000,
         height=500,
@@ -55,4 +57,4 @@ def theme_analyzer(main_themes):
     )
     plt.close()
 
-    print("[Theme Analysis]: Saved theme analysis visualizations to Topic_Modeling/plots.")
+    print("\n[Theme Analysis]: Saved visualizations to Topic_Modeling/plots.")

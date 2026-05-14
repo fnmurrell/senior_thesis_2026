@@ -44,7 +44,7 @@ def main():
 
     # Run the Pre-Processor for NLTK tokenization and lemmatization
     if(not os.path.exists("goodreads_final_reviews.json")):
-        USER_STOPWORDS = input("Enter a list of custom stopwords separated by commas: \n")
+        USER_STOPWORDS = input("Enter a list of custom stopwords separated by commas (e.g., weekdays, author, book title, etc.): \n")
         USER_STOPWORDS = set(word.strip() for word in user_input.split(','))
         preprocessor_tokenize(USER_STOPWORDS)
 
