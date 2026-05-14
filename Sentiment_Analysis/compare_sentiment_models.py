@@ -4,9 +4,9 @@ import seaborn as sns
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
 
-def sentiment_comparison():
+def sentiment_comparison(directory_path):
     print("\n[Sentiment Comparison]: Read in dataset with star ratings and sentiment scores from VADER and RoBERTa models.")
-    reviews = pd.read_json("RoBERTa_reviews.json")
+    reviews = pd.read_json(directory_path + "RoBERTa_reviews.json")
 
     # generate joint plot for VADER and RoBERTa
     print("\n[Sentiment Copmarison]: Create and save joint plot.")
@@ -19,7 +19,7 @@ def sentiment_comparison():
 
     g.fig.suptitle("VADER vs RoBERTa Compound Scores", y=1.02)
     g.fig.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/sentiment_jointplot.png", 
+        directory_path + "/Sentiment_Comparison/sentiment_jointplot.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -50,7 +50,7 @@ def sentiment_comparison():
     plt.title("VADER vs RoBERTa Label Agreement")
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/sentiment_heatmap.png", 
+        directory_path + "/Sentiment_Comparison/sentiment_heatmap.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -68,10 +68,8 @@ def sentiment_comparison():
     report_df = pd.DataFrame(report).transpose()
 
     # Save as CSV
-    csv_path = "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/classification_report.csv"
+    csv_path = directory_path + "/Sentiment_Comparison/classification_report.csv"
     report_df.round(3).to_csv(csv_path)
-
-    print(f"[Sentiment Comparison]: Classification report saved as CSV to: {csv_path}")
 
     # find correlations
     print("\n[Sentiment Comparison]: Create and save correlation summary.")
@@ -85,10 +83,8 @@ def sentiment_comparison():
     })
 
     # Save to CSV
-    csv_path = "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/correlation_summary.csv"
+    csv_path = directory_path + "/Sentiment_Comparison/correlation_summary.csv"
     corr_df.round(4).to_csv(csv_path, index=False)
-
-    print(f"[Sentiment Comparison]: Correlation summary saved as CSV to: {csv_path}")
 
     # generate star rating based confusion matrices
     print("\n[Sentiment Comparison]: Create and save confusion matrices based on star ratings.")
@@ -126,7 +122,7 @@ def sentiment_comparison():
     plt.title("Star Rating vs RoBERTa Label")
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/star_roberta_heatmap.png", 
+        directory_path + "/Sentiment_Comparison/star_roberta_heatmap.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -156,11 +152,11 @@ def sentiment_comparison():
     plt.title("Star Rating vs VADER Label")
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/star_vader_heatmap.png", 
+        directory_path + "/Sentiment_Comparison/star_vader_heatmap.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
     )
     plt.close()
 
-    print("\n[Sentiment Comparison]: All graphs comparing sentiment analysis models saved to Sentiment_Analysis/plots.")
+    print("\n[Sentiment Comparison]: All graphs comparing sentiment analysis models saved.")

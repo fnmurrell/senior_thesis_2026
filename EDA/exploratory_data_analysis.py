@@ -5,9 +5,9 @@ from datetime import datetime
 from wordcloud import WordCloud
 import seaborn as sns
 
-def eda_processor():
+def eda_processor(directory_path):
     print("\n[EDA]: Read in final processed Goodreads reviews.")
-    reviews = pd.read_json("goodreads_final_reviews.json")
+    reviews = pd.read_json(directory_path + "goodreads_final_reviews.json")
 
     # Number of reviews per star rating
     print("\n[EDA]: Number of reviews by star rating.")
@@ -32,7 +32,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/reviews_by_rating.png",
+        directory_path + "/EDA/reviews_by_rating.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -64,7 +64,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/reviews_per_year.png",
+        directory_path + "/EDA/reviews_per_year.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -102,7 +102,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/reviews_per_year_by_rating.png",
+        directory_path + "/EDA/reviews_per_year_by_rating.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -131,7 +131,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/avg_word_count_by_rating.png",
+        directory_path + "/EDA/avg_word_count_by_rating.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -150,7 +150,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/word_count_boxplot_by_rating.png",
+        directory_path + "/EDA/word_count_boxplot_by_rating.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -180,7 +180,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/review_length_statistics.png",
+        directory_path + "/EDA/review_length_statistics.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -216,7 +216,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/avg_likes_by_rating.png",
+        directory_path + "/EDA/avg_likes_by_rating.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -234,7 +234,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/likes_boxplot_by_rating.png",
+        directory_path + "/EDA/likes_boxplot_by_rating.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -253,7 +253,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/word_count_distro.png",
+        directory_path + "/EDA/word_count_distro.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -272,7 +272,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/char_count_distro.png",
+        directory_path + "/EDA/char_count_distro.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -291,7 +291,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/likes_distro.png",
+        directory_path + "/EDA/likes_distro.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -314,7 +314,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/likes_v_length.png",
+        directory_path + "/EDA/likes_v_length.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -365,7 +365,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/adj_word_freq.png",
+        directory_path + "/EDA/adj_word_freq.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -398,7 +398,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/noun_word_freq.png",
+        directory_path + "/EDA/noun_word_freq.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -431,7 +431,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/verb_word_freq.png",
+        directory_path + "/EDA/verb_word_freq.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -464,7 +464,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/adv_word_freq.png",
+        directory_path + "/EDA/adv_word_freq.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -487,7 +487,7 @@ def eda_processor():
     fig.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/nouns_wordcloud.png",
+        directory_path + "/EDA/nouns_wordcloud.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -508,7 +508,7 @@ def eda_processor():
     ax.set_title("Number of Reviews by Year and Rating")
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/reviews_year_rating_heatmap.png",
+        directory_path + "/EDA/reviews_year_rating_heatmap.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -521,11 +521,9 @@ def eda_processor():
     pairgrid.fig.suptitle("Pairwise Relationships", y=1.02)  # set title
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/EDA/plots/pairwise_graph.png",
+        directory_path + "/EDA/pairwise_graph.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
     )
     plt.close()
-
-    print("All graphs saved to EDA/plots.")

@@ -4,9 +4,9 @@ import hashlib
 def generate_review_id(text):
     return hashlib.md5(text.encode('utf-8')).hexdigest()
 
-def preprocessor_datachecks():
+def preprocessor_datachecks(directory_path):
     print("\n[Pre-Processor]: Read in English only Goodreads reviews.")
-    reviews = pd.read_json("goodreads_eng_only_reviews.json").drop('language', axis=1)
+    reviews = pd.read_json(directory_path + "goodreads_eng_only_reviews.json").drop('language', axis=1)
 
     # Create stable unique ID based on review text
     print("\n [Pre-Processor]: Create and assign unique ID to each review.")
@@ -35,4 +35,4 @@ def preprocessor_datachecks():
     print("[Pre-Processor]: Find any reviews with missing values:\n", reviews.isna().sum())
 
     # Saving checked dataset to JSON.
-    reviews.to_json("/home/faith/Documents/Senior_Thesis_2026/Datasets/goodreads_checked_reviews.json", orient="records", indent=2) 
+    reviews.to_json(directory_path + "goodreads_checked_reviews.json", orient="records", indent=2) 

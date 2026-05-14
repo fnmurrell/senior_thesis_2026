@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-def roberta_analysis():
+def roberta_analysis(directory_path):
     print("\n[RoBERTa]: Read in Goodreads reviews after VADER sentiment analysis.")
-    reviews = pd.read_json("VADER_reviews.json")
+    reviews = pd.read_json(directory_path + "VADER_reviews.json")
 
     MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment"
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -80,7 +80,7 @@ def roberta_analysis():
     plt.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/roberta_review_sentiment_by_month.png", 
+        directory_path + "/RoBERTa/review_sentiment_by_month.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -99,7 +99,7 @@ def roberta_analysis():
     plt.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/roberta_review_sentiment_by_year.png", 
+        directory_path + "/RoBERTa/review_sentiment_by_year.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -126,7 +126,7 @@ def roberta_analysis():
     plt.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/roberta_compound_density.png", 
+        directory_path + "/RoBERTa/compound_density.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -151,7 +151,7 @@ def roberta_analysis():
     plt.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/roberta_sentiment_by_star_rating_boxplot.png", 
+        directory_path + "/RoBERTa/sentiment_by_star_rating_boxplot.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -175,7 +175,7 @@ def roberta_analysis():
     plt.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/roberta_rating_vs_sentiment_regression.png", 
+        directory_path + "/RoBERTa/rating_vs_sentiment_regression.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -183,5 +183,4 @@ def roberta_analysis():
     plt.close()
     
     # save RoBERTa predicted sentiments to JSON
-    print("\n[RoBERTa]: All RoBERTa graphs saved to Sentiment_Analysis/plots. JSON file saved.")
-    reviews.to_json("RoBERTa_reviews.json", orient="records", indent=2) 
+    reviews.to_json(directory_path + "RoBERTa_reviews.json", orient="records", indent=2) 

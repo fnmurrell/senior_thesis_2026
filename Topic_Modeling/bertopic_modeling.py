@@ -59,9 +59,9 @@ def compute_topic_diversity(topic_model, top_k=10):
 
 # TODO -- for future projects, identify tuneable elements and abstract them to main.py (final number of topics, custom stopwords)
 
-def bertopic_analyzer():
+def bertopic_analyzer(directory_path):
     print("\n[BERTopic]: Read in final Goodreads dataset.")
-    reviews = pd.read_json("LDA_reviews.json")
+    reviews = pd.read_json(directory_path + "LDA_reviews.json")
 
     docs = [
         " ".join([word for word in doc.split()])
@@ -198,16 +198,16 @@ def bertopic_analyzer():
 
     # Visualize 2D image of topics
     fig = topic_model.visualize_topics()
-    fig.write_html("/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_map.html")
+    fig.write_html(directory_path + "/BERTopic/map.html")
 
     # Visualize a barchart of selected topics
     fig = topic_model.visualize_barchart()
-    fig.write_html("/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_barchart.html")
+    fig.write_html(directory_path + "/BERTopic/barchart.html")
 
     # Visualize the topics over time
     topics_over_time = topic_model.topics_over_time(docs, dates, nr_bins=50)
     fig = topic_model.visualize_topics_over_time(topics_over_time)
-    fig.write_html("/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_timeline.html")
+    fig.write_html(directory_path + "/BERTopic/timeline.html")
 
     # Generate bar chart for topic proportions
     topic_table = pd.DataFrame({
@@ -224,7 +224,7 @@ def bertopic_analyzer():
     plt.xticks(topic_table["Topic"])
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_topic_proportions.png", 
+        directory_path + "/BERTopic/topic_proportions.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -251,7 +251,7 @@ def bertopic_analyzer():
         plt.axis("off")
         plt.title(f"BERTopic Topic {topic}")
 
-        save_path = f"/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_topic_{topic}.png"
+        save_path = directory_path + f"/BERTopic/topic_{topic}.png"
         plt.savefig(
             save_path, 
             bbox_inches="tight", 
@@ -269,7 +269,7 @@ def bertopic_analyzer():
         reviews["bert_prob"] = 0
 
     top_n = 5
-    output_path = "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/BERTopic_topic_representative_reviews.txt"
+    output_path = directory_path + "/BERTopic/topic_representative_reviews.txt"
 
     with open(output_path, "w") as f:
         for topic in sorted(set(topics)):
@@ -290,4 +290,4 @@ def bertopic_analyzer():
     
     # save BERTopic topics and probabilities to JSON
     print("\n[BERTopic]: Save topics and topic probability to Goodreads dataset.")
-    reviews.to_json("BERTopic_reviews.json", orient="records", indent=2)
+    reviews.to_json(directory_path + "BERTopic_reviews.json", orient="records", indent=2)

@@ -89,11 +89,11 @@ def compute_lda_stability(tf, n_topics, n_runs=5, top_n=10):
 
 # TODO -- for future projects, identify tuneable elements and abstract them to main.py (final number of topics, custom stopwords)
 
-def lda_analyzer():
+def lda_analyzer(directory_path):
     print("\n[LDA]: Read in final Goodreads dataset.")
-    reviews = pd.read_json("RoBERTa_reviews.json")
+    reviews = pd.read_json(directory_path + "RoBERTa_reviews.json")
 
-    output_dir = "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/"
+    output_dir = directory_path + "/LDA/"
     os.makedirs(output_dir, exist_ok=True)
 
     tf_vectorizer = CountVectorizer(
@@ -304,4 +304,4 @@ def lda_analyzer():
 
     # save LDA dominant topics to JSON
     print("\n[LDA]: Save topics and topic probability to Goodreads dataset.")
-    reviews.to_json("LDA_reviews.json", orient="records", indent=2)
+    reviews.to_json(directory_path + "LDA_reviews.json", orient="records", indent=2)

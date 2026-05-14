@@ -12,9 +12,9 @@ nltk.download('wordnet')
 nltk.download('omw-1.4') 
 nltk.download('averaged_perceptron_tagger_eng') 
 
-def preprocessor_tokenize(user_stopwords):
+def preprocessor_tokenize(directory_path, user_stopwords):
     print("\n[Pre-Processor]: Read in cleaned Goodreads reviews.")
-    reviews = pd.read_json("goodreads_cleaned_reviews.json")
+    reviews = pd.read_json(directory_path + "goodreads_cleaned_reviews.json")
 
     # tokenize review text using NLTK
     print("\n[Pre-Processor]: Tokenize review text.")
@@ -65,4 +65,4 @@ def preprocessor_tokenize(user_stopwords):
     reviews['lemmatized_string'] = reviews['lemmatized_comment'].apply(lambda x: ' '.join(word for word, pos in x))
 
     # Saving final preprocessed dataset to JSON.
-    reviews.to_json("/home/faith/Documents/Senior_Thesis_2026/Datasets/goodreads_final_reviews.json", orient="records", indent=2)
+    reviews.to_json(directory_path + "goodreads_final_reviews.json", orient="records", indent=2)

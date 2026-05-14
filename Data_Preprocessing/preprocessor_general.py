@@ -7,9 +7,9 @@ def non_ascii_chars(text):
     non_ascii_chars = re.findall(r'[^\x00-\x7F]+', str(text))
     return ', '.join(non_ascii_chars) if non_ascii_chars else None
 
-def preprocessor_general():
+def preprocessor_general(directory_path):
     print("\n[Pre-Processor]: Read in quality checked Goodreads reviews.")
-    reviews = pd.read_json("goodreads_checked_reviews.json").drop('likes', axis=1)
+    reviews = pd.read_json(directory_path + "goodreads_checked_reviews.json").drop('likes', axis=1)
 
     # Convert the 'comment' column to lowercase
     print("\n[Pre-Processor]: Lowercase the review comments.")
@@ -52,4 +52,4 @@ def preprocessor_general():
     reviews.insert(4, "review_word_count", reviews["comment"].str.split().str.len(), True)
 
     # Saving preprocessed dataset to JSON.
-    reviews.to_json("/home/faith/Documents/Senior_Thesis_2026/Datasets/goodreads_cleaned_reviews.json", orient="records", indent=2)
+    reviews.to_json(directory_path + "goodreads_cleaned_reviews.json", orient="records", indent=2)

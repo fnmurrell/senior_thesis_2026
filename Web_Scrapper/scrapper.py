@@ -51,12 +51,10 @@ def write_to_file(reviews, filename):
         json.dump(reviews, final, indent=2, default=lambda x: list(x) if isinstance(x, tuple) else str(x))
     return print("Data written to JSON.")
 
-#NUM_PAGES = 10856 // 30
 OUTPUT_FILE = "goodreads_reviews.json"
 TIME_SLEEP = 5
-#URL = "https://www.goodreads.com/book/show/46787/reviews?reviewFilters=eyJhZnRlciI6Ik9UTXdOeXd4TlRRME16RTNPVFEyTWpReiJ9"
 
-def scrape_reviews(NUM_PAGES, URL):
+def scrape_reviews(directory_path, NUM_PAGES, URL):
     print("[Scrapper]: Scrapping data from GoodReads")
     #  Setup the drive
     driver = webdriver.Firefox()
@@ -81,4 +79,4 @@ def scrape_reviews(NUM_PAGES, URL):
     final_reviews = list(itertools.chain.from_iterable(all_reviews))
 
     # Generate final dataset
-    write_to_file(final_reviews,OUTPUT_FILE)
+    write_to_file(final_reviews, directory_path + OUTPUT_FILE)

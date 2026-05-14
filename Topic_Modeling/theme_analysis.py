@@ -3,9 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
-def theme_analyzer(main_themes):
+def theme_analyzer(directory_path, main_themes):
     print("\n[Theme Analysis]: Read in final Goodreads dataset and define key themes.")    
-    reviews = pd.read_json("RoBERTa_reviews.json")[["lemmatized_string"]]
+    reviews = pd.read_json(directory_path + "RoBERTa_reviews.json")[["lemmatized_string"]]
 
     theme_counts = Counter()
 
@@ -29,7 +29,7 @@ def theme_analyzer(main_themes):
     plt.title("Theme Frequency in Goodreads Reviews")
     
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/theme_frequency_bar_chart.png",
+        directory_path + "/Topic_Modeling/theme_frequency_chart.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -50,11 +50,9 @@ def theme_analyzer(main_themes):
     plt.title("Theme Frequency Word Cloud")
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Topic_Modeling/plots/theme_frequency_wordcloud.png",
+        directory_path + "/Topic_Modeling/theme_frequency_wordcloud.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
     )
     plt.close()
-
-    print("\n[Theme Analysis]: Saved visualizations to Topic_Modeling/plots.")

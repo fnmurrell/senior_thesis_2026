@@ -1,14 +1,6 @@
 venv
-goodreads_reviews.json
-goodreads_eng_only_reviews.json
-goodreads_checked_reviews.json
-goodreads_cleaned_reviews.json
-goodreads_final_reviews.json
-VADER_reviews.json
-RoBERTa_reviews.json
-LDA_reviews.json
-BERTopic_reviews.json
-evaluation_reviews.json
 general_cleanup.py
 sentiment_distribution.csv
+UncleTomsCabin
+data
 *__pycache__

@@ -18,12 +18,12 @@ def extract_score(text):
 
     return compound, sentiment
 
-def vader_analysis():
+def vader_analysis(directory_path):
     print("\n[VADER]: Read in final Goodreads dataset.")
-    reviews = pd.read_json("goodreads_final_reviews.json")
+    reviews = pd.read_json(directory_path + "goodreads_final_reviews.json")
 
     # feed lemmatized comment to VADER analyzer for sentiment calculations
-    print("[VADER]: Apply SentimentIntensityAnalyzer to reviews.")
+    print("\n[VADER]: Apply SentimentIntensityAnalyzer to reviews.")
 
     reviews[['VADER_compound', 'VADER_label']] = (
         reviews['lemmatized_string']
@@ -46,7 +46,7 @@ def vader_analysis():
     plt.tight_layout() 
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_review_sentiment_by_month.png", 
+        directory_path + "/VADER/review_sentiment_by_month.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -65,7 +65,7 @@ def vader_analysis():
     plt.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_review_sentiment_by_year.png", 
+        directory_path + "/VADER/review_sentiment_by_year.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -92,7 +92,7 @@ def vader_analysis():
     plt.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_compound_density.png", 
+        directory_path + "/VADER/compound_density.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -117,7 +117,7 @@ def vader_analysis():
     plt.tight_layout()
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_sentiment_by_star_rating_boxplot.png", 
+        directory_path + "/VADER/sentiment_by_star_rating_boxplot.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -141,7 +141,7 @@ def vader_analysis():
     plt.tight_layout()
     
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_rating_vs_sentiment_regression.png", 
+        directory_path + "/VADER/rating_vs_sentiment_regression.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -149,5 +149,4 @@ def vader_analysis():
     plt.close()
 
     # save VADER predicted sentiments to JSON
-    print("\n[VADER]: All VADER graphs saved to Sentiment_Analysis/plots. JSON file saved.")
-    reviews.to_json("VADER_reviews.json", orient="records", indent=2)
+    reviews.to_json(directory_path + "VADER_reviews.json", orient="records", indent=2)

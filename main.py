@@ -20,73 +20,77 @@ import os
 
 def main():
     # TODO Create a directory for a given url. -- Ask for title of book
-    # TODO Figure out how to parameterize the visualization pieces of the pipeline
 
-    # directory process -- create a main folder to store the datasets and a sub-folder for each steps to save graphs
+    # Create directory
+    directory_path = "data/book_title/"
 
     # Scrape The Web
-    if(not os.path.exists("goodreads_reviews.json")):
+    if(not os.path.exists(directory_path + "goodreads_reviews.json")):
+        # Create directory per book
+        directory_path = input("Enter the file path for output data (format: data/book_title): \n")
+        os.mkdir(directory_path)
+
         NUM_PAGES = input("Enter the total number of Goodreads reviews for analysis: \n")
         URL = input("Paste the URL that directs to all community reviews for the book on Goodreads: \n")
-        scrape_reviews(int(NUM_PAGES), URL)
+        scrape_reviews(directory_path, int(NUM_PAGES), URL)
     
     # Run the Pre-Processor to remove Non-English
-    if(not os.path.exists("goodreads_eng_only_reviews.json")):
-        preprocessor_find_english_reviews()
+    if(not os.path.exists(directory_path + "goodreads_eng_only_reviews.json")):
+        preprocessor_find_english_reviews(directory_path)
 
     # Run the Pre-Processor for checking missing values and data types
-    if(not os.path.exists("goodreads_checked_reviews.json")):
-        preprocessor_datachecks()
+    if(not os.path.exists(directory_path + "goodreads_checked_reviews.json")):
+        preprocessor_datachecks(directory_path)
     
     # Run the Pre-Processor for cleaning up review text
-    if(not os.path.exists("goodreads_cleaned_reviews.json")):
-        preprocessor_general()
+    if(not os.path.exists(directory_path + "goodreads_cleaned_reviews.json")):
+        preprocessor_general(directory_path)
 
     # Run the Pre-Processor for NLTK tokenization and lemmatization
-    if(not os.path.exists("goodreads_final_reviews.json")):
+    if(not os.path.exists(directory_path + "goodreads_final_reviews.json")):
         USER_STOPWORDS = input("Enter a list of custom stopwords separated by commas (e.g., weekdays, author, book title, etc.): \n")
         USER_STOPWORDS = set(word.strip() for word in user_input.split(','))
-        preprocessor_tokenize(USER_STOPWORDS)
+        preprocessor_tokenize(directory_path, USER_STOPWORDS)
 
     # Run exploratory data analysis
-    eda_processor()
+    eda_processor(directory_path)
 
     # Run VADER sentiment analysis
-    if(not os.path.exists("VADER_reviews.json")):
-        vader_analysis()
+    if(not os.path.exists(directory_path + "VADER_reviews.json")):
+        vader_analysis(directory_path)
     
     # # Run VADER visualizations
     # vader_visualizer()
 
     # Run RoBERTa sentiment analysis
-    if(not os.path.exists("RoBERTa_reviews.json")):
-        roberta_analysis()
+    if(not os.path.exists(directory_path + "RoBERTa_reviews.json")):
+        roberta_analysis(directory_path)
 
     # # Run RoBERTa visualizations
     # roberta_visualizer()
 
     # Compare sentiment models and star ratings
-    sentiment_comparison()
+    sentiment_comparison(directory_path)
 
     # Run TF-IDF for semantic similarity analysis
-    tf_idf_analyzer()
+    tf_idf_analyzer(directory_path)
 
     # Identify frequency of predefined keywords and themes in dataset 
     main_themes = input("Enter a list of themes you want to analyze in reviews, separated by commas: ")
     main_themes = [theme.strip() for theme in main_themes.split(",")]
 
-    theme_analyzer(main_themes)
+    theme_analyzer(directory_path, main_themes)
 
     # Run LDA topic modeling
-    if(not os.path.exists("LDA_reviews.json")):
-        lda_analyzer()
+    if(not os.path.exists(directory_path + "LDA_reviews.json")):
+        lda_analyzer(directory_path)
 
     # Run BERTopic modeling
-    if(not os.path.exists("BERTopic_reviews.json")):
-        bertopic_analyzer()
+    if(not os.path.exists(directory_path + "BERTopic_reviews.json")):
+        bertopic_analyzer(directory_path)
 
     # Run statistical evaluations
-    model_evaluations()
+    model_evaluations(directory_path)
 
 if __name__ == "__main__":
     main()

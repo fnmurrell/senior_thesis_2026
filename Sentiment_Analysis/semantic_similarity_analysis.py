@@ -8,9 +8,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-def tf_idf_analyzer():
+def tf_idf_analyzer(directory_path):
     print("\n[TF-IDF]: Read in final Goodreads dataset.")
-    reviews = pd.read_json("RoBERTa_reviews.json")[["lemmatized_string"]]
+    reviews = pd.read_json(directory_path + "RoBERTa_reviews.json")[["lemmatized_string"]]
 
     print("\n[TF-IDF]: Run reviews through TF-IDF analyzer to understand semantic similarity.")
     vectorizer = TfidfVectorizer()
@@ -54,7 +54,7 @@ def tf_idf_analyzer():
     table.auto_set_column_width(col=list(range(len(top_10.columns))))
 
     plt.savefig(
-        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/tfidf_top10_similarity_table.png",
+        directory_path + "/Sentiment_Comparison/tfidf_top10_similarity.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
