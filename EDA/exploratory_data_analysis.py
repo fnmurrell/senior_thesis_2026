@@ -10,7 +10,7 @@ def eda_processor():
     reviews = pd.read_json("goodreads_final_reviews.json")
 
     # Number of reviews per star rating
-    print("[EDA]: Number of reviews by star rating.")
+    print("\n[EDA]: Number of reviews by star rating.")
     rating_counts = reviews['rating'].value_counts()
 
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -40,7 +40,7 @@ def eda_processor():
     plt.close()
 
     # Number of reviews per year
-    print("[EDA]: Number of reviews by year.")
+    print("\n[EDA]: Number of reviews by year.")
     reviews['year'] = reviews['date'].dt.year # extract year
     reviews_per_year = reviews.groupby('year')['comment'].count().sort_index() # count number of reviews per year
 
@@ -72,7 +72,7 @@ def eda_processor():
     plt.close()
 
     # Number of reviews, star rating, and year (track popularity over years)
-    print("[EDA]: Number of reviews by year and star rating.")
+    print("\n[EDA]: Number of reviews by year and star rating.")
 
     # Create grouped year + rating dataframe
     reviews_year_rating = (
@@ -110,7 +110,7 @@ def eda_processor():
     plt.close()
 
     # Length of review per star rating (did people who liked the book write more or less)
-    print("[EDA]: Average word length of review by star rating.")
+    print("\n[EDA]: Average word length of review by star rating.")
     avg_word_length = reviews.groupby('rating')['review_word_count'].mean()
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -139,7 +139,7 @@ def eda_processor():
     plt.close()
 
     # Create boxplot to show word count distribution
-    print("[EDA]: Analyze word count distributions.")
+    print("\n[EDA]: Analyze word count distributions.")
     fig, ax = plt.subplots(figsize=(12, 6))
 
     reviews.boxplot(column='review_word_count', by='rating', ax=ax)
@@ -158,6 +158,7 @@ def eda_processor():
     plt.close()
 
     # Find mean and median of review word and character counts
+    print("\n[EDA]: Calculate the mean and median for review word and character counts.")
     stats_table = reviews[['review_word_count', 'review_char_count']].agg({
         'review_word_count': ['mean', 'median', lambda x: x[x > 0].min(), 'max'],
         'review_char_count': ['mean', 'median', lambda x: x[x > 0].min(), 'max']
@@ -187,7 +188,7 @@ def eda_processor():
     plt.close()
 
     # Number of reviews, star rating, and number of likes (did people resonate with negative reviews more than positive) 
-    print("[EDA]: Average number of likes by star rating.")
+    print("\n[EDA]: Average number of likes by star rating.")
 
     avg_likes_by_rating = (
         reviews
@@ -223,7 +224,7 @@ def eda_processor():
     plt.close()
 
     # Create boxplot of likes by rating
-    print("[EDA]: Create boxplot of likes by star rating.")
+    print("\n[EDA]: Create boxplot of likes by star rating.")
     fig, ax = plt.subplots(figsize=(12,6))
     reviews.boxplot(column='numLikes', by='rating', ax=ax)
     ax.set_title('Distribution of Likes by Star Rating')
@@ -241,7 +242,7 @@ def eda_processor():
     plt.close()
 
     # Distribution of review lengths - word count
-    print("[EDA]: Distribution of review lengths by word count.")
+    print("\n[EDA]: Distribution of review lengths by word count.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.hist(reviews['review_word_count'], bins=30, color='purple')
@@ -260,7 +261,7 @@ def eda_processor():
     plt.close()
 
     # Distribution of review lengths - character count
-    print("[EDA]: Distribution of review lengths by character count.")
+    print("\n[EDA]: Distribution of review lengths by character count.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.hist(reviews['review_char_count'], bins=30, color='darkcyan')
@@ -279,7 +280,7 @@ def eda_processor():
     plt.close()
 
     # Distribution of number of likes
-    print("[EDA]: Distribution of number of likes.")
+    print("\n[EDA]: Distribution of number of likes.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.hist(reviews['numLikes'], bins=10, color='gold')
@@ -298,6 +299,7 @@ def eda_processor():
     plt.close()
 
     # Review length by number of likes (Do longer reviews get more likes?)
+    print("\n[EDA]: Analyze review length by number of likes.")
     fig, ax = plt.subplots(figsize=(12,6))
     colors = {1:'gray', 2:'purple', 3:'darkcyan', 4:'gold', 5:'red'}
     for rating in sorted(reviews['rating'].dropna().unique()):
@@ -320,7 +322,7 @@ def eda_processor():
     plt.close()
 
     # word frequency plots 
-    print("[EDA]: 50 most frequent words in user reviews by word type (i.e., noun, verb).")
+    print("\n[EDA]: 50 most frequent words in user reviews by word type (i.e., noun, verb).")
 
     # Explode the list of (lemma, POS) tuples
     all_pos = reviews['lemmatized_comment'].explode().dropna()
@@ -470,7 +472,7 @@ def eda_processor():
     plt.close()
 
     # word cloud of nouns
-    print("[EDA]: Word cloud of common nouns used in reviews.")
+    print("\n[EDA]: Word cloud of common nouns used in reviews.")
 
     text = " ".join(nouns)
     wc = WordCloud(
@@ -493,7 +495,7 @@ def eda_processor():
     plt.close()
 
     # Show rating vs. year in a heatmap for visual trends
-    print("[EDA]: Heatmap of rating v. year.")
+    print("\n[EDA]: Heatmap of rating v. year.")
     rating_year = reviews.pivot_table(
         index='year', 
         columns='rating', 
@@ -514,6 +516,7 @@ def eda_processor():
     plt.close()
 
     # Correlate review_word_count, review_char_count, numLikes, rating
+    print("\n[EDA]: Generate pair grid to view correlations between word count, character count, likes, and ratings.")
     pairgrid = sns.pairplot(reviews[['review_word_count', 'review_char_count', 'numLikes', 'rating']])
     pairgrid.fig.suptitle("Pairwise Relationships", y=1.02)  # set title
 

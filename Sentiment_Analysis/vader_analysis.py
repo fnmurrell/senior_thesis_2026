@@ -1,5 +1,8 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
 
 def extract_score(text):
     model = SentimentIntensityAnalyzer()
@@ -19,10 +22,6 @@ def vader_analysis():
     print("\n[VADER]: Read in final Goodreads dataset.")
     reviews = pd.read_json("goodreads_final_reviews.json")
 
-    # Convert lemmatized comment back into string
-    print("[VADER]: Convert lemmatized comment into string for analysis.")
-    reviews['lemmatized_string'] = reviews['lemmatized_comment'].apply(lambda x: ' '.join(word for word, pos in x))
-
     # feed lemmatized comment to VADER analyzer for sentiment calculations
     print("[VADER]: Apply SentimentIntensityAnalyzer to reviews.")
 
@@ -31,5 +30,124 @@ def vader_analysis():
         .apply(lambda x: pd.Series(extract_score(x)))
         )
 
+    # VADER data visualizations
+    palette = {"positive": "#a559aa", "neutral": "#cecece", "negative": "#e02b35"}  # Purple, Gray, Red
+
+    # Group by month and generate sentiment over time plot
+    print("\n[VADER]: Graph sentiment over time by month.")
+    reviews = reviews.set_index('date')
+    monthly_sentiment = reviews.resample('ME')['VADER_compound'].mean()
+
+    plt.figure(figsize=(10, 5))
+    monthly_sentiment.plot(color="darkcyan")
+    plt.title("Average Review Sentiment by Month")
+    plt.ylabel("Mean Compound Score")
+    plt.axhline(0, color='black', linewidth=1)
+    plt.tight_layout() 
+
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_review_sentiment_by_month.png", 
+        bbox_inches="tight", 
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
+    
+    # Group by year and generate sentiment over plot
+    print("\n[VADER]: Graph sentiment over time by year.")
+    yearly_sentiment = reviews.resample('YE')['VADER_compound'].mean()
+
+    plt.figure(figsize=(10, 5))
+    yearly_sentiment.plot(color="darkcyan")
+    plt.title("Average Review Sentiment by Year")
+    plt.ylabel("Mean Compound Score")
+    plt.axhline(0, color='black', linewidth=1)
+    plt.tight_layout()
+
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_review_sentiment_by_year.png", 
+        bbox_inches="tight", 
+        pad_inches=0.5,
+        dpi=300
+    )
+    plt.close()
+    reviews = reviews.reset_index()
+
+    # Create density plot by sentiment label
+    print("\n[VADER]: Create density plot by sentiment label.")
+    plt.figure(figsize=(12, 8))
+
+    sns.kdeplot(
+        data=reviews, 
+        x="VADER_compound", 
+        hue="VADER_label", 
+        fill=True, 
+        common_norm=False,
+        palette=palette
+    )
+
+    plt.title("Distribution of VADER Compound Scores")
+    plt.xlabel("Compound Sentiment Score")
+    plt.ylabel("Density")
+    plt.tight_layout()
+
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_compound_density.png", 
+        bbox_inches="tight", 
+        pad_inches=0.5, 
+        dpi=300
+    )
+    plt.close()
+
+    # Boxplot: Sentiment by Star Rating
+    print("\n[VADER]: Create boxplot of sentiment by star rating.")
+    plt.figure(figsize=(8, 6))
+
+    sns.boxplot(
+        x="rating", 
+        y="VADER_compound", 
+        data=reviews,
+        palette=palette
+    )
+
+    plt.title("Sentiment Distribution by Star Rating")
+    plt.xlabel("Star Rating")
+    plt.ylabel("Compound Sentiment Score")
+    plt.axhline(0, color="black", linewidth=1)
+    plt.tight_layout()
+
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_sentiment_by_star_rating_boxplot.png", 
+        bbox_inches="tight", 
+        pad_inches=0.5, 
+        dpi=300
+    )
+    plt.close()
+
+    # Regression plot
+    print("\n[VADER]: Create regression plot of star rating to sentiment label.")
+    plt.figure(figsize=(8, 6))
+
+    sns.regplot(
+        x="rating", 
+        y="VADER_compound", 
+        data=reviews,
+        palette=palette
+    )
+
+    plt.title("Star Rating vs. VADER Sentiment")
+    plt.xlabel("Star Rating")
+    plt.ylabel("Compound Sentiment Score")
+    plt.tight_layout()
+    
+    plt.savefig(
+        "/home/faith/Documents/Senior_Thesis_2026/Sentiment_Analysis/plots/vader_rating_vs_sentiment_regression.png", 
+        bbox_inches="tight", 
+        pad_inches=0.5, 
+        dpi=300
+    )
+    plt.close()
+
     # save VADER predicted sentiments to JSON
+    print("\n[VADER]: All VADER graphs saved to Sentiment_Analysis/plots. JSON file saved.")
     reviews.to_json("VADER_reviews.json", orient="records", indent=2)

@@ -10,8 +10,9 @@ import matplotlib.pyplot as plt
 
 def tf_idf_analyzer():
     print("\n[TF-IDF]: Read in final Goodreads dataset.")
-    reviews = pd.read_json("VADER_reviews.json")[["lemmatized_string"]]
+    reviews = pd.read_json("RoBERTa_reviews.json")[["lemmatized_string"]]
 
+    print("\n[TF-IDF]: Run reviews through TF-IDF analyzer to understand semantic similarity.")
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(reviews["lemmatized_string"])
 
@@ -60,4 +61,4 @@ def tf_idf_analyzer():
     )
     plt.close()
     
-    print("[TF-IDF]: Similarity scores saved to folder.")
+    print("\n[TF-IDF]: Similarity scores saved to folder.")

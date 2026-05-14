@@ -5,9 +5,9 @@ from Data_Preprocessing.preprocessor_tokenize import preprocessor_tokenize
 from Web_Scrapper.scrapper import scrape_reviews
 from EDA.exploratory_data_analysis import eda_processor
 from Sentiment_Analysis.vader_analysis import vader_analysis
-from Sentiment_Analysis.vader_visualizations import vader_visualizer
+#from Sentiment_Analysis.vader_visualizations import vader_visualizer
 from Sentiment_Analysis.roberta_analysis import roberta_analysis
-from Sentiment_Analysis.roberta_visualizations import roberta_visualizer
+#from Sentiment_Analysis.roberta_visualizations import roberta_visualizer
 from Sentiment_Analysis.compare_sentiment_models import sentiment_comparison
 from Sentiment_Analysis.semantic_similarity_analysis import tf_idf_analyzer
 from Topic_Modeling.theme_analysis import theme_analyzer
@@ -21,6 +21,8 @@ import os
 def main():
     # TODO Create a directory for a given url. -- Ask for title of book
     # TODO Figure out how to parameterize the visualization pieces of the pipeline
+
+    # directory process -- create a main folder to store the datasets and a sub-folder for each steps to save graphs
 
     # Scrape The Web
     if(not os.path.exists("goodreads_reviews.json")):
@@ -42,7 +44,9 @@ def main():
 
     # Run the Pre-Processor for NLTK tokenization and lemmatization
     if(not os.path.exists("goodreads_final_reviews.json")):
-        preprocessor_tokenize()
+        USER_STOPWORDS = input("Enter a list of custom stopwords separated by commas: \n")
+        USER_STOPWORDS = set(word.strip() for word in user_input.split(','))
+        preprocessor_tokenize(USER_STOPWORDS)
 
     # Run exploratory data analysis
     eda_processor()
@@ -51,15 +55,15 @@ def main():
     if(not os.path.exists("VADER_reviews.json")):
         vader_analysis()
     
-    # Run VADER visualizations
-    vader_visualizer()
+    # # Run VADER visualizations
+    # vader_visualizer()
 
     # Run RoBERTa sentiment analysis
     if(not os.path.exists("RoBERTa_reviews.json")):
         roberta_analysis()
 
-    # Run RoBERTa visualizations
-    roberta_visualizer()
+    # # Run RoBERTa visualizations
+    # roberta_visualizer()
 
     # Compare sentiment models and star ratings
     sentiment_comparison()

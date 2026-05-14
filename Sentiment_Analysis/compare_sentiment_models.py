@@ -9,7 +9,7 @@ def sentiment_comparison():
     reviews = pd.read_json("RoBERTa_reviews.json")
 
     # generate joint plot for VADER and RoBERTa
-    print("Create and save joint plot.")
+    print("\n[Sentiment Copmarison]: Create and save joint plot.")
     g = sns.jointplot(
         data=reviews,
         x="VADER_compound",
@@ -27,7 +27,7 @@ def sentiment_comparison():
     plt.close(g.fig)
 
     # generate confusion matrix heatmap
-    print("[Sentiment Comparison]: Create and save confusion matrix heatmap.")
+    print("\n [Sentiment Comparison]: Create and save confusion matrix heatmap.")
     cm = confusion_matrix(
         reviews["VADER_label"],
         reviews["roberta_label"],
@@ -58,7 +58,7 @@ def sentiment_comparison():
     plt.close()
 
     # generate classification report
-    print("[Sentiment Comparison]: Create and save classification report.")
+    print("\n[Sentiment Comparison]: Create and save classification report.")
     report = classification_report(
         reviews["VADER_label"],
         reviews["roberta_label"],
@@ -74,7 +74,7 @@ def sentiment_comparison():
     print(f"[Sentiment Comparison]: Classification report saved as CSV to: {csv_path}")
 
     # find correlations
-    print("[Sentiment Comparison]: Create and save correlation summary.")
+    print("\n[Sentiment Comparison]: Create and save correlation summary.")
     roberta_corr = reviews["roberta_compound"].corr(reviews["rating"])
     vader_corr = reviews["VADER_compound"].corr(reviews["rating"])
 
@@ -91,7 +91,7 @@ def sentiment_comparison():
     print(f"[Sentiment Comparison]: Correlation summary saved as CSV to: {csv_path}")
 
     # generate star rating based confusion matrices
-    print("[Sentiment Comparison]: Create and save confusion matrices based on star ratings.")
+    print("\n[Sentiment Comparison]: Create and save confusion matrices based on star ratings.")
 
     def star_to_label(star):
         if star >= 4:
@@ -163,4 +163,4 @@ def sentiment_comparison():
     )
     plt.close()
 
-    print("[Sentiment Comparison]: All graphs comparing sentiment analysis models saved to Sentiment_Analysis/plots.")
+    print("\n[Sentiment Comparison]: All graphs comparing sentiment analysis models saved to Sentiment_Analysis/plots.")

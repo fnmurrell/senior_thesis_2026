@@ -12,29 +12,27 @@ nltk.download('wordnet')
 nltk.download('omw-1.4') 
 nltk.download('averaged_perceptron_tagger_eng') 
 
-def preprocessor_tokenize():
+def preprocessor_tokenize(user_stopwords):
     print("\n[Pre-Processor]: Read in cleaned Goodreads reviews.")
     reviews = pd.read_json("goodreads_cleaned_reviews.json")
 
     # tokenize review text using NLTK
-    print("[Pre-Processor]: Tokenize review text.")
+    print("\n[Pre-Processor]: Tokenize review text.")
     reviews.insert(loc = 3,
           column = 'tokenized_comment',
           value = reviews.apply(lambda row: word_tokenize(row['comment']), axis=1))
 
     # remove stopwords from review text using NLTK
-    print("[Pre-Processor]: Remove stopwords from review text.")
+    print("\n[Pre-Processor]: Remove stopwords from review text.")
     stop_words = set(stopwords.words('english'))
-    custom_stopwords = stop_words
 
-    # Add weekdays to stopwords
-    weekdays = {'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'}
-    custom_stopwords.update(weekdays)
+    # Add user-designated stopwords
+    stop_words.update(user_stopwords)
 
-    reviews['tokenized_comment'] = reviews['tokenized_comment'].apply(lambda words: [word for word in words if word not in custom_stopwords and not word.isdigit()])
+    reviews['tokenized_comment'] = reviews['tokenized_comment'].apply(lambda words: [word for word in words if word not in stop_words and not word.isdigit()])
 
     # apply lemmatization to review text using NLTK
-    print("[Pre-Processor]: Apply lemmatization to review text.")
+    print("\n[Pre-Processor]: Apply lemmatization to review text.")
     
     def get_wordnet_pos(treebank_tag):
         if treebank_tag.startswith('J'):
@@ -61,6 +59,10 @@ def preprocessor_tokenize():
         return [(lemma, tag) for lemma, (_, tag) in zip(lemmatized, pos_tags)]
 
     reviews['lemmatized_comment'] = reviews['tokenized_comment'].apply(lemmatize_tokens)
+    
+    # Convert lemmatized comment back into string
+    print("\n[Pre-Processor]: Convert lemmatized comment into string for model analysis.")
+    reviews['lemmatized_string'] = reviews['lemmatized_comment'].apply(lambda x: ' '.join(word for word, pos in x))
 
     # Saving final preprocessed dataset to JSON.
-    reviews.to_json("goodreads_final_reviews.json", orient="records", indent=2)
+    reviews.to_json("/home/faith/Documents/Senior_Thesis_2026/Datasets/goodreads_final_reviews.json", orient="records", indent=2)

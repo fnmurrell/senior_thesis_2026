@@ -12,15 +12,15 @@ def preprocessor_general():
     reviews = pd.read_json("goodreads_checked_reviews.json").drop('likes', axis=1)
 
     # Convert the 'comment' column to lowercase
-    print("[Pre-Processor]: Lowercase the review comments.")
+    print("\n[Pre-Processor]: Lowercase the review comments.")
     reviews['comment'] = reviews['comment'].str.lower()
 
     # Remove URLs, HTML artifacts, and platform-generated text if present
-    print("[Pre-Processor]: Remove URLs, HTML artifacts, web-generated text.")
+    print("\n[Pre-Processor]: Remove URLs, HTML artifacts, web-generated text.")
     reviews['comment'] = reviews['comment'].apply(lambda x: re.split('https:\/\/.*', str(x))[0])
 
     # Remove punctuation
-    print("[Pre-Processor]: Remove punctuation from review comments.")
+    print("\n[Pre-Processor]: Remove punctuation from review comments.")
 
     # Create a translation table to remove all punctuation; str.maketrans maps all punctuation characters to None
     punct = string.punctuation
@@ -29,27 +29,27 @@ def preprocessor_general():
     reviews['comment'] = reviews['comment'].str.translate(translation_table)
     
     # Normalize or remove emojis and special characters
-    print("[Pre-Processor]: Find reviews with non-ASCII characters.")
+    print("\n[Pre-Processor]: Find reviews with non-ASCII characters.")
     reviews['Non_ASCII_Chars'] = reviews['comment'].apply(non_ascii_chars)
     non_ascii_rows = reviews[reviews['Non_ASCII_Chars'].notna()]
 
     print("Number of rows with non-ASCII characters:", len(non_ascii_rows))
 
-    print("[Pre-Processor]: Remove emojis and special characters.")
+    print("\n[Pre-Processor]: Remove emojis and special characters.")
     reviews['comment'] = reviews['comment'].str.encode('ascii', 'ignore').str.decode('ascii')
 
     cleaned_rows = reviews[reviews['comment'].apply(non_ascii_chars).notna()]
     print("Number of rows with non-ASCII characters after cleaning:", len(cleaned_rows))
 
     # Remove excess whitespace
-    print("[Pre-Processor]: Remove excess whitespace.")
+    print("\n[Pre-Processor]: Remove excess whitespace.")
     reviews['comment'] = reviews['comment'].str.replace(r'\s+', ' ', regex=True).str.strip()
     
     # Compute review length, including character count and word count, from the cleaned review text
-    print("[Pre-Processor]: Calculate review length.")
+    print("\n[Pre-Processor]: Calculate review length.")
 
     reviews.insert(3, "review_char_count", reviews["comment"].str.len(), True)
     reviews.insert(4, "review_word_count", reviews["comment"].str.split().str.len(), True)
 
     # Saving preprocessed dataset to JSON.
-    reviews.to_json("goodreads_cleaned_reviews.json", orient="records", indent=2)
+    reviews.to_json("/home/faith/Documents/Senior_Thesis_2026/Datasets/goodreads_cleaned_reviews.json", orient="records", indent=2)
