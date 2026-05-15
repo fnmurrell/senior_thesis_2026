@@ -1,12 +1,32 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 import seaborn as sns
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
+from cycler import cycler
 
 def sentiment_comparison(directory_path):
     print("\n[Sentiment Comparison]: Read in dataset with star ratings and sentiment scores from VADER and RoBERTa models.")
     reviews = pd.read_json(directory_path + "RoBERTa_reviews.json")
+
+    # Define colors
+    PALETTE = [
+        "#ffd700", #gold
+        "#0000ff", #indigo
+        "#fa8775", #light orange
+        "#9d02d7", #magenta
+        "#cd34b5", #magenta
+        "#ffb14e", #orange
+        "#ea5f94" #pink
+    ]
+
+    plt.rcParams['axes.prop_cycle'] = cycler(color=PALETTE)
+    sns.set_palette(PALETTE)
+    custom_cmap = LinearSegmentedColormap.from_list(
+        "custom_palette",
+        PALETTE
+    )
 
     # generate joint plot for VADER and RoBERTa
     print("\n[Sentiment Copmarison]: Create and save joint plot.")
@@ -40,7 +60,7 @@ def sentiment_comparison(directory_path):
         cm,
         annot=True,
         fmt="d",
-        cmap="Blues",
+        cmap=custom_cmap,
         xticklabels=["negative", "neutral", "positive"],
         yticklabels=["negative", "neutral", "positive"]
     )
@@ -112,7 +132,7 @@ def sentiment_comparison(directory_path):
         cm_star_roberta,
         annot=True,
         fmt="d",
-        cmap="Blues",
+        cmap=custom_cmap,
         xticklabels=["negative", "neutral", "positive"],
         yticklabels=["negative", "neutral", "positive"]
     )
@@ -142,7 +162,7 @@ def sentiment_comparison(directory_path):
         cm_star_vader,
         annot=True,
         fmt="d",
-        cmap="Blues",
+        cmap=custom_cmap,
         xticklabels=["negative", "neutral", "positive"],
         yticklabels=["negative", "neutral", "positive"]
     )

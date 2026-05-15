@@ -4,17 +4,36 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from wordcloud import WordCloud
 import seaborn as sns
+from cycler import cycler
 
 def eda_processor(directory_path):
     print("\n[EDA]: Read in final processed Goodreads reviews.")
     reviews = pd.read_json(directory_path + "goodreads_final_reviews.json")
+
+    # Define colors
+    PALETTE = [
+        "#ffd700", #gold
+        "#0000ff", #indigo
+        "#fa8775", #light orange
+        "#9d02d7", #magenta
+        "#cd34b5", #magenta
+        "#ffb14e", #orange
+        "#ea5f94" #pink
+    ]
+
+    plt.rcParams['axes.prop_cycle'] = cycler(color=PALETTE)
+    sns.set_palette(PALETTE)
 
     # Number of reviews per star rating
     print("\n[EDA]: Number of reviews by star rating.")
     rating_counts = reviews['rating'].value_counts()
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(rating_counts.index, rating_counts, color='purple')
+    bars = ax.bar(
+        rating_counts.index,
+        rating_counts,
+        color=[PALETTE[i % len(PALETTE)] for i in range(len(rating_counts))]
+    )
     ax.set_title('Number of Reviews per Star Rating')
     ax.set_xlabel('Rating')
     ax.set_ylabel('Number of Reviews')
@@ -45,7 +64,18 @@ def eda_processor(directory_path):
     reviews_per_year = reviews.groupby('year')['comment'].count().sort_index() # count number of reviews per year
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(reviews_per_year.index.astype(str), reviews_per_year.values, color='darkcyan')
+
+    year_colors = [
+        PALETTE[i % len(PALETTE)]
+        for i in range(len(reviews_per_year))
+    ]
+
+    bars = ax.bar(
+        reviews_per_year.index.astype(str),
+        reviews_per_year.values,
+        color=year_colors
+    )
+
     ax.set_title('Number of Reviews per Year')
     ax.set_xlabel('Year')
     ax.set_ylabel('Number of Reviews')
@@ -86,11 +116,12 @@ def eda_processor(directory_path):
 
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    for rating in sorted(reviews_year_rating.columns):
+    for i, rating in enumerate(sorted(reviews_year_rating.columns)):
         ax.plot(
             reviews_year_rating.index,
             reviews_year_rating[rating],
             marker='o',
+            color=PALETTE[i % len(PALETTE)],
             label=f'{rating} Stars'
         )
 
@@ -114,7 +145,11 @@ def eda_processor(directory_path):
     avg_word_length = reviews.groupby('rating')['review_word_count'].mean()
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(avg_word_length.index, avg_word_length.values, color='gold')
+    bars = ax.bar(
+        avg_word_length.index, 
+        avg_word_length.values, 
+        color=[PALETTE[i % len(PALETTE)] for i in range(len(avg_word_length))]
+    )
     ax.set_title("Average Review Word Count by Star Rating")
     ax.set_xlabel("Star Rating")
     ax.set_ylabel("Average Word Count")
@@ -140,7 +175,7 @@ def eda_processor(directory_path):
 
     # Create boxplot to show word count distribution
     print("\n[EDA]: Analyze word count distributions.")
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 6), facecolor=PALETTE[1])
 
     reviews.boxplot(column='review_word_count', by='rating', ax=ax)
     ax.set_title("Review Word Count by Star Rating")
@@ -199,7 +234,11 @@ def eda_processor(directory_path):
     )
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(avg_likes_by_rating.index, avg_likes_by_rating.values)
+    bars = ax.bar(
+        avg_likes_by_rating.index, 
+        avg_likes_by_rating.values,
+        color=[PALETTE[i % len(PALETTE)] for i in range(len(avg_likes_by_rating))]
+    )
     ax.set_title('Average Number of Likes per Star Rating')
     ax.set_xlabel('Star Rating')
     ax.set_ylabel('Average Likes')
@@ -225,7 +264,7 @@ def eda_processor(directory_path):
 
     # Create boxplot of likes by rating
     print("\n[EDA]: Create boxplot of likes by star rating.")
-    fig, ax = plt.subplots(figsize=(12,6))
+    fig, ax = plt.subplots(figsize=(12,6), facecolor=PALETTE[0])
     reviews.boxplot(column='numLikes', by='rating', ax=ax)
     ax.set_title('Distribution of Likes by Star Rating')
     ax.set_xlabel('Star Rating')
@@ -245,7 +284,7 @@ def eda_processor(directory_path):
     print("\n[EDA]: Distribution of review lengths by word count.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(reviews['review_word_count'], bins=30, color='purple')
+    ax.hist(reviews['review_word_count'], bins=30, color=PALETTE[0])
     ax.set_title('Distribution of Review Word Count')
     ax.set_xlabel('Word Count')
     ax.set_ylabel('Frequency')
@@ -264,7 +303,7 @@ def eda_processor(directory_path):
     print("\n[EDA]: Distribution of review lengths by character count.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(reviews['review_char_count'], bins=30, color='darkcyan')
+    ax.hist(reviews['review_char_count'], bins=30, color=PALETTE[1])
     ax.set_title('Distribution of Review Character Count')
     ax.set_xlabel('Character Count')
     ax.set_ylabel('Frequency')
@@ -283,7 +322,7 @@ def eda_processor(directory_path):
     print("\n[EDA]: Distribution of number of likes.")
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.hist(reviews['numLikes'], bins=10, color='gold')
+    ax.hist(reviews['numLikes'], bins=10, color=PALETTE[2])
     ax.set_title('Distribution of Likes')
     ax.set_xlabel('Likes')
     ax.set_ylabel('Frequency')
@@ -301,7 +340,13 @@ def eda_processor(directory_path):
     # Review length by number of likes (Do longer reviews get more likes?)
     print("\n[EDA]: Analyze review length by number of likes.")
     fig, ax = plt.subplots(figsize=(12,6))
-    colors = {1:'gray', 2:'purple', 3:'darkcyan', 4:'gold', 5:'red'}
+    colors = {
+        1: PALETTE[0],
+        2: PALETTE[1],
+        3: PALETTE[2],
+        4: PALETTE[3],
+        5: PALETTE[4]
+    }    
     for rating in sorted(reviews['rating'].dropna().unique()):
         subset = reviews[reviews['rating']==rating]
         ax.scatter(subset['review_word_count'], subset['numLikes'],  
@@ -345,7 +390,7 @@ def eda_processor(directory_path):
     freqs = [c for w, c in top_adj]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(words, freqs, color='purple')
+    bars = ax.bar(words, freqs, color=PALETTE[3])
 
     ax.set_title("Top 50 Most Frequent Adjectives")
     ax.set_xlabel("Adjective")
@@ -378,7 +423,7 @@ def eda_processor(directory_path):
     freqs = [c for w, c in top_noun]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(words, freqs, color='darkcyan')
+    bars = ax.bar(words, freqs, color=PALETTE[4])
 
     ax.set_xlabel("Noun")
     ax.set_ylabel("Frequency")
@@ -411,7 +456,7 @@ def eda_processor(directory_path):
     freqs = [c for w, c in top_verb]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(words, freqs, color='gold')
+    bars = ax.bar(words, freqs, color=PALETTE[5])
 
     ax.set_xlabel("Verb")
     ax.set_ylabel("Frequency")
@@ -444,7 +489,7 @@ def eda_processor(directory_path):
     freqs = [c for w, c in top_adv]
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    bars = ax.bar(words, freqs, color='red')
+    bars = ax.bar(words, freqs, color=PALETTE[6])
 
     ax.set_xlabel("Adverb")
     ax.set_ylabel("Frequency")

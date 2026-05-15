@@ -19,8 +19,6 @@ import pandas as pd
 import os
 
 def main():
-    # TODO Create a directory for a given url. -- Ask for title of book
-
     # Create directory
     directory_path = "data/book_title/"
 

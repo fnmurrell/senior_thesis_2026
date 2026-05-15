@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+from cycler import cycler
 
 def extract_score(text):
     model = SentimentIntensityAnalyzer()
@@ -31,7 +32,18 @@ def vader_analysis(directory_path):
         )
 
     # VADER data visualizations
-    palette = {"positive": "#a559aa", "neutral": "#cecece", "negative": "#e02b35"}  # Purple, Gray, Red
+    PALETTE = [
+        "#ffd700", #gold
+        "#0000ff", #indigo
+        "#fa8775", #light orange
+        "#9d02d7", #magenta
+        "#cd34b5", #magenta
+        "#ffb14e", #orange
+        "#ea5f94" #pink
+    ]
+
+    plt.rcParams['axes.prop_cycle'] = cycler(color=PALETTE)
+    sns.set_palette(PALETTE)
 
     # Group by month and generate sentiment over time plot
     print("\n[VADER]: Graph sentiment over time by month.")
@@ -39,7 +51,7 @@ def vader_analysis(directory_path):
     monthly_sentiment = reviews.resample('ME')['VADER_compound'].mean()
 
     plt.figure(figsize=(10, 5))
-    monthly_sentiment.plot(color="darkcyan")
+    monthly_sentiment.plot(color=PALETTE[0])
     plt.title("Average Review Sentiment by Month")
     plt.ylabel("Mean Compound Score")
     plt.axhline(0, color='black', linewidth=1)
@@ -58,7 +70,7 @@ def vader_analysis(directory_path):
     yearly_sentiment = reviews.resample('YE')['VADER_compound'].mean()
 
     plt.figure(figsize=(10, 5))
-    yearly_sentiment.plot(color="darkcyan")
+    yearly_sentiment.plot(color=PALETTE[1])
     plt.title("Average Review Sentiment by Year")
     plt.ylabel("Mean Compound Score")
     plt.axhline(0, color='black', linewidth=1)
@@ -83,7 +95,7 @@ def vader_analysis(directory_path):
         hue="VADER_label", 
         fill=True, 
         common_norm=False,
-        palette=palette
+        palette=PALETTE
     )
 
     plt.title("Distribution of VADER Compound Scores")
@@ -107,7 +119,7 @@ def vader_analysis(directory_path):
         x="rating", 
         y="VADER_compound", 
         data=reviews,
-        palette=palette
+        palette=PALETTE
     )
 
     plt.title("Sentiment Distribution by Star Rating")
@@ -132,7 +144,7 @@ def vader_analysis(directory_path):
         x="rating", 
         y="VADER_compound", 
         data=reviews,
-        palette=palette
+        palette=PALETTE
     )
 
     plt.title("Star Rating vs. VADER Sentiment")
