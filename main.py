@@ -83,9 +83,13 @@ def main():
     if(not os.path.exists(directory_path + "LDA_reviews.json")):
         lda_analyzer(directory_path)
 
+        # max_df, min_df=2, max_features, topic_range
+
     # Run BERTopic modeling
     if(not os.path.exists(directory_path + "BERTopic_reviews.json")):
         bertopic_analyzer(directory_path)
+
+        # num_runs, n_neighbors, n_components, min_cluster_size
 
     # Run statistical evaluations
     model_evaluations(directory_path)
