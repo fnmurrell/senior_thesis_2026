@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 def cramers_v(chi2, n, r, k):
     return np.sqrt(chi2 / (n * (min(r - 1, k - 1))))
 
+# TODO moral versus stylistic themes should be input by the user 
 def model_evaluations(directory_path):
     print("\n[Topic Comparison]: Read in final Goodreads dataset.")
     reviews = pd.read_json(directory_path + "BERTopic_reviews.json")
