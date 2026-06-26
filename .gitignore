@@ -3,4 +3,5 @@ general_cleanup.py
 sentiment_distribution.csv
 UncleTomsCabin
 data
+YY_goodreads_reviews.json
 *__pycache__
