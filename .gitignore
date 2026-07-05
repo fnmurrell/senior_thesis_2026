@@ -4,4 +4,6 @@ sentiment_distribution.csv
 UncleTomsCabin
 data
 YY_goodreads_reviews.json
+checkpoint.txt
+combine_json.py
 *__pycache__

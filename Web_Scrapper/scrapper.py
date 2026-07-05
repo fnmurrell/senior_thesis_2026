@@ -58,7 +58,33 @@ def write_to_file(reviews, filename):
 
     print(f"Data written to JSON. {len(reviews)} rows saved.")
 
-OUTPUT_FILE = "goodreads_reviews.json"
+def page_filter(driver):
+    wait = WebDriverWait(driver, 10)
+
+    # open filter menu
+    wait.until(
+        EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, ".ReviewFilters__filters button")
+        )
+    ).click()
+
+    # select "Oldest"
+    option = wait.until(
+        EC.element_to_be_clickable(
+            (By.XPATH, "//label[contains(., 'Oldest')]")
+        )
+    )
+    driver.execute_script("arguments[0].click();", option)
+
+    # APPLY BUTTON
+    apply_btn = wait.until(
+        EC.element_to_be_clickable(
+            (By.XPATH, "//button[contains(., 'Apply')]")
+        )
+    )
+    driver.execute_script("arguments[0].click();", apply_btn)
+
+OUTPUT_FILE = directory_path + "_goodreads_reviews.json"
 TIME_SLEEP = 15
 
 def scrape_reviews(directory_path, NUM_PAGES, URL):
@@ -66,6 +92,7 @@ def scrape_reviews(directory_path, NUM_PAGES, URL):
     #  Setup the drive
     driver = webdriver.Firefox()
     driver.get(URL)
+    page_filter(driver)
     
     with open(OUTPUT_FILE, "w"):
         pass
@@ -88,5 +115,5 @@ def scrape_reviews(directory_path, NUM_PAGES, URL):
     # Close the browser
     driver.quit()
 
-    write_to_file(all_reviews, directory_path + OUTPUT_FILE)
+    write_to_file(all_reviews, OUTPUT_FILE)
     print("[Scrapper]: Scrapping complete.")
