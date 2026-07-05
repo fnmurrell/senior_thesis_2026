@@ -1,4 +1,4 @@
-# Senior Thesis 2026
+# Moral discourse and stylistic critique at scale: Mapping themes and sentiment in Goodreads reviews 
 The primary objective of this project is to evaluate whether contemporary readers demonstrate an understanding of and engagement with the key themes historically associated with Uncle Tom’s Cabin. This objective is achieved through the application of NLP techniques to Goodreads reviews.
 
 # Technical Design
