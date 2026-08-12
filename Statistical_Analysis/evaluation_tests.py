@@ -334,13 +334,14 @@ def model_evaluations():
 
     # Save results
     table.to_csv(os.path.join(PLOTS_DIR, "topics_over_time_table.csv"))
+
     with open(os.path.join(PLOTS_DIR, "topics_over_time_stats.txt"), "w") as f:
         f.write(
             f"Chi-square test: Topics over time\n"
             f"Chi2 = {chi2:.4f}\n"
             f"p-value = {p:.6e}\n"
             f"Degrees of freedom = {dof}\n"
-            f"Cramer's V = {cramers:.4f}\n"
+            f"Cramer's V = {cramers_v(chi2, n, r, k):.4f}\n"
             f"Sample size (n) = {n}\n"
         )
 

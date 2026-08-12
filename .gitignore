@@ -11,4 +11,6 @@ BERTopic_reviews.json
 evaluation_reviews.json
 general_cleanup.py
 sentiment_distribution.csv
+combine_json.py
+/data
 *__pycache__

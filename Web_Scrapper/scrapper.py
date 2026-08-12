@@ -47,14 +47,29 @@ def load_next_page(driver):
     button.click()
 
 def write_to_file(reviews, filename):
-    with open(filename, "w") as final:
-        json.dump(reviews, final, indent=2, default=lambda x: list(x) if isinstance(x, tuple) else str(x))
-    return print("Data written to JSON.")
+    try:
+        # Load existing reviews if the file already exists
+        with open(filename, "r", encoding="utf-8") as final:
+            existing_reviews = json.load(final)
+    except (FileNotFoundError, json.JSONDecodeError):
+        existing_reviews = []
 
-#NUM_PAGES = 10856 // 30
+    # Add newly scraped reviews
+    existing_reviews.extend(reviews)
+
+    # Write everything back to the file
+    with open(filename, "w", encoding="utf-8") as final:
+        json.dump(
+            existing_reviews,
+            final,
+            indent=2,
+            default=lambda x: list(x) if isinstance(x, tuple) else str(x)
+        )
+
+    print(f"Data written to JSON. Total reviews: {len(existing_reviews)}")
+
 OUTPUT_FILE = "goodreads_reviews.json"
-TIME_SLEEP = 5
-#URL = "https://www.goodreads.com/book/show/46787/reviews?reviewFilters=eyJhZnRlciI6Ik9UTXdOeXd4TlRRME16RTNPVFEyTWpReiJ9"
+TIME_SLEEP = 10
 
 def scrape_reviews(NUM_PAGES, URL):
     print("[Scrapper]: Scrapping data from GoodReads")
@@ -65,20 +80,37 @@ def scrape_reviews(NUM_PAGES, URL):
     # Wait for page to load
     time.sleep(TIME_SLEEP)
 
-    # Create reviews list
-    all_reviews = []
-    
-    # loop through review pages, scrape data, append, and click button for more reviews
-    for page in range(math.ceil(NUM_PAGES / 30)):
-        all_reviews.append(scrape_page(driver))
-        load_next_page(driver)
-        time.sleep(TIME_SLEEP)
+def scrape_reviews(NUM_PAGES, URL):
+    print("[Scrapper]: Scrapping data from GoodReads")
 
-    # Close the browser
-    driver.quit()
+    driver = webdriver.Firefox()
+    driver.get(URL)
 
-    # Flatten the reviews list
-    final_reviews = list(itertools.chain.from_iterable(all_reviews))
+    time.sleep(TIME_SLEEP)
 
-    # Generate final dataset
-    write_to_file(final_reviews,OUTPUT_FILE)
+    total_pages = math.ceil(NUM_PAGES / 30)
+
+    try:
+        for page in range(total_pages):
+            print(f"\n[Scrapper]: Starting page {page + 1} of {total_pages}")
+
+            print("[Scrapper]: Scraping page...")
+            reviews = scrape_page(driver)
+
+            print(f"[Scrapper]: Found {len(reviews)} reviews")
+
+            print("[Scrapper]: Saving reviews...")
+            write_to_file(reviews, OUTPUT_FILE)
+
+            print(f"[Scrapper]: Completed page {page + 1} of {total_pages}")
+
+            if page < total_pages - 1:
+                print("[Scrapper]: Loading next page...")
+                load_next_page(driver)
+
+                print("[Scrapper]: Waiting for page...")
+                time.sleep(TIME_SLEEP)
+
+    finally:
+        print("[Scrapper]: Closing browser...")
+        driver.quit()

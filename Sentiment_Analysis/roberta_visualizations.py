@@ -7,8 +7,17 @@ def roberta_visualizer():
     print("\n[RoBERTa]: Read in predicted sentiments by RoBERTa model.")
     reviews = pd.read_json("RoBERTa_reviews.json")
 
-    palette = {"positive": "#a559aa", "neutral": "#cecece", "negative": "#e02b35"}  # Purple, Gray, Red
+    palette = {
+        "positive": "#a559aa",  # Purple
+        "neutral": "#cecece",   # Gray
+        "negative": "#e02b35",  # Red
 
+        "1.0": "#4f8fc0",   # Blue
+        "2.0": "#5aaa6f",   # Green
+        "3.0": "#e09b3d",   # Orange
+        "4.0": "#d16b9e",   # Pink
+        "5.0": "#6d6bb3",   # Indigo
+    }
     # Group by month and generate sentiment over time plot
     print("[RoBERTa]: See sentiment over time by month.")
     reviews = reviews.set_index('date')
@@ -108,7 +117,6 @@ def roberta_visualizer():
         x="rating", 
         y="roberta_compound", 
         data=reviews,
-        palette=palette
     )
 
     plt.title("Star Rating vs. RoBERTa Sentiment")
