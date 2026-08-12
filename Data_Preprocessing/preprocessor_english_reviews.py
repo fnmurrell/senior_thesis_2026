@@ -23,7 +23,10 @@ def preprocessor_find_english_reviews(directory_path):
             return detect(text)
         except LangDetectException:
             return "Unknown"
-
+    
+    print("\n[Pre-Processor]: Filter out Non-English reviews.")
+    reviews['language'] = reviews['comment'].apply(detect_language)
+    
     print("\n[Pre-Processor]: Create graph of reviews by language.")
     # Define colors
     PALETTE = [
@@ -72,16 +75,12 @@ def preprocessor_find_english_reviews(directory_path):
     fig.tight_layout()
 
     plt.savefig(
-        directory_path + "/EDA/reviews_by_lang.png",
+        directory_path + "EDA/reviews_by_lang.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
     )
     plt.close()
-
-
-    print("\n[Pre-Processor]: Filter out Non-English reviews.")
-    reviews['language'] = reviews['comment'].apply(detect_language)
 
     # Saving language to JSON.
     eng_only = reviews[reviews['language'] == 'en']

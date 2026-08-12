@@ -31,7 +31,7 @@ def model_evaluations(directory_path):
     corr_vader, p_vader = spearmanr(vader_df["VADER_compound"], vader_df["rating"])
     corr_roberta, p_roberta = spearmanr(roberta_df["roberta_compound"], roberta_df["rating"])
 
-    with open(os.path.join(directory_path, "/Statistical_Analysis/spearman_results.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/spearman_results.txt"), "w") as f:
         f.write(f"VADER: rho={corr_vader:.3f}, p={p_vader:.3e}\n")
         f.write(f"RoBERTa: rho={corr_roberta:.3f}, p={p_roberta:.3e}")
 
@@ -44,7 +44,7 @@ def model_evaluations(directory_path):
     plt.ylabel("Sentiment Score")
     plt.tight_layout()
     plt.savefig(
-        directory_path + "/Statistical_Analysis/RoBERTa_sentiment_star_rating.png",
+        directory_path + "Statistical_Analysis/RoBERTa_sentiment_star_rating.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -101,7 +101,7 @@ def model_evaluations(directory_path):
     r, k = table.shape
 
     # Save results
-    with open(os.path.join(directory_path, "/Statistical_Analysis/chi_square_roberta.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/chi_square_roberta.txt"), "w") as f:
         f.write(f"VADER χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
     plot_heatmap(table, "VADER Sentiment vs High Rating", "vader_heatmap.png")
 
@@ -112,7 +112,7 @@ def model_evaluations(directory_path):
     r, k = table.shape
 
     # Save results
-    with open(os.path.join(directory_path, "/Statistical_Analysis/chi_square_roberta.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/chi_square_roberta.txt"), "w") as f:
         f.write(f"BERTopic χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
     plot_heatmap(table, "BERTopic vs RoBERTa Sentiment", "bertopic_heatmap.png")
 
@@ -123,7 +123,7 @@ def model_evaluations(directory_path):
     r, k = table.shape
 
     # Save results
-    with open(os.path.join(directory_path, "/Statistical_Analysis/chi_square_roberta.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/chi_square_roberta.txt"), "w") as f:
         f.write(f"LDA χ²={chi2:.2f}, p={p:.3e}, Cramér's V={cramers_v(chi2, n, r, k):.3f}")
     plot_heatmap(table, "LDA Topic vs RoBERTa Sentiment", "lda_heatmap.png")
 
@@ -134,7 +134,7 @@ def model_evaluations(directory_path):
     bertopic_sentiment = bertopic_sentiment.sort_values("mean", ascending=False)
 
     # Save table
-    bertopic_sentiment.to_csv(os.path.join(directory_path, "/Statistical_Analysis/BERTopic_sentiment_summary.csv"))
+    bertopic_sentiment.to_csv(os.path.join(directory_path, "Statistical_Analysis/BERTopic_sentiment_summary.csv"))
 
     # Bar plot of mean sentiment
     plt.figure()
@@ -145,7 +145,7 @@ def model_evaluations(directory_path):
     plt.title("Average Sentiment by Topic")
     plt.tight_layout()
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/BERTopic_sentiment_means.png"),
+        os.path.join(directory_path, "Statistical_Analysis/BERTopic_sentiment_means.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -156,7 +156,7 @@ def model_evaluations(directory_path):
     lda_sentiment = lda_sentiment.sort_values("mean", ascending=False)
 
     # Save table
-    lda_sentiment.to_csv(os.path.join(directory_path, "/Statistical_Analysis/lda_sentiment_summary.csv"))
+    lda_sentiment.to_csv(os.path.join(directory_path, "Statistical_Analysis/lda_sentiment_summary.csv"))
 
     # Bar plot of mean sentiment
     plt.figure()
@@ -167,7 +167,7 @@ def model_evaluations(directory_path):
     plt.title("Average Sentiment by Topic")
     plt.tight_layout()
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/lda_sentiment_means.png"),
+        os.path.join(directory_path, "Statistical_Analysis/lda_sentiment_means.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -185,7 +185,7 @@ def model_evaluations(directory_path):
     plt.ylabel("Sentiment Score")
     plt.tight_layout()
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/sentiment_by_topic.png"),
+        os.path.join(directory_path, "Statistical_Analysis/sentiment_by_topic.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -205,18 +205,18 @@ def model_evaluations(directory_path):
 
     model = sm.Logit(y_clean, X_clean).fit()
     # Save results
-    with open(os.path.join(directory_path, "/Statistical_Analysis/logit_high_rating_summary.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/logit_high_rating_summary.txt"), "w") as f:
         f.write(model.summary().as_text())
 
     # Odds ratios
     odds_ratios = np.exp(model.params)
-    odds_ratios.to_csv(os.path.join(directory_path, "/Statistical_Analysis/odds_ratios_high_rating.csv"))
+    odds_ratios.to_csv(os.path.join(directory_path, "Statistical_Analysis/odds_ratios_high_rating.csv"))
 
     # Accuracy
     preds = model.predict(X_clean)
     pred_labels = (preds >= 0.5).astype(int)
     # Save results
-    with open(os.path.join(directory_path, "/Statistical_Analysis/logit_accuracy.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/logit_accuracy.txt"), "w") as f:
         f.write(f"Accuracy (Rating): {accuracy_score(y_clean, pred_labels):.4f}")
 
     # Odds ratios
@@ -227,7 +227,7 @@ def model_evaluations(directory_path):
     plt.title("Feature Effects on High Rating")
     plt.tight_layout()
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/feature_effects_high_rating.png"),
+        os.path.join(directory_path, "Statistical_Analysis/feature_effects_high_rating.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -240,16 +240,16 @@ def model_evaluations(directory_path):
 
     model_sent = sm.Logit(y_sent, X_clean).fit()
     # Save results
-    with open(os.path.join(directory_path, "/Statistical_Analysis/logit_sentiment_summary.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/logit_sentiment_summary.txt"), "w") as f:
         f.write(model_sent.summary().as_text())
 
     odds_ratios_sent = np.exp(model_sent.params)
-    odds_ratios_sent.to_csv(os.path.join(directory_path, "/Statistical_Analysis/odds_ratios_sentiment.csv"))
+    odds_ratios_sent.to_csv(os.path.join(directory_path, "Statistical_Analysis/odds_ratios_sentiment.csv"))
 
     preds_sent = model_sent.predict(X_clean)
     pred_labels_sent = (preds_sent >= 0.5).astype(int)
     # Save results
-    with open(os.path.join(directory_path, "/Statistical_Analysis/sentiment_accuracy.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/sentiment_accuracy.txt"), "w") as f:
         f.write(f"Accuracy (Sentiment): {accuracy_score(y_sent, pred_labels_sent):.4f}")
 
     # Correlation Matrix
@@ -278,7 +278,7 @@ def model_evaluations(directory_path):
     plt.colorbar()
     plt.tight_layout()
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/spearman_correlation_matrix.png"),
+        os.path.join(directory_path, "Statistical_Analysis/spearman_correlation_matrix.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -286,7 +286,7 @@ def model_evaluations(directory_path):
     plt.close()
 
     # Save results
-    corr_matrix.to_csv(os.path.join(directory_path, "/Statistical_Analysis/spearman_correlation_matrix.csv"))
+    corr_matrix.to_csv(os.path.join(directory_path, "Statistical_Analysis/spearman_correlation_matrix.csv"))
 
     # Temporal Analysis
     print("\n[Topic Comparison]: Conduct Temporal Analysis.")
@@ -303,7 +303,7 @@ def model_evaluations(directory_path):
     plt.title("RoBERTa Sentiment Over Time")
     plt.tight_layout()
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/RoBERTa_over_time.png"),
+        os.path.join(directory_path, "Statistical_Analysis/RoBERTa_over_time.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -317,7 +317,7 @@ def model_evaluations(directory_path):
     plt.title("VADER Sentiment Over Time")
     plt.tight_layout()
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/VADER_over_time.png"),
+        os.path.join(directory_path, "Statistical_Analysis/VADER_over_time.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -331,15 +331,15 @@ def model_evaluations(directory_path):
     r, k = table.shape
 
     # Save results
-    table.to_csv(os.path.join(directory_path, "/Statistical_Analysis/topics_over_time_table.csv"))
+    table.to_csv(os.path.join(directory_path, "Statistical_Analysis/topics_over_time_table.csv"))
     
-    with open(os.path.join(directory_path, "/Statistical_Analysis/topics_over_time_stats.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/topics_over_time_stats.txt"), "w") as f:
         f.write(
             f"Chi-square test: Topics over time\n"
             f"Chi2 = {chi2:.4f}\n"
             f"p-value = {p:.6e}\n"
             f"Degrees of freedom = {dof}\n"
-            f"Cramer's V = {cramers:.4f}\n"
+            f"Cramer's V = {cramers_v(chi2, n, r, k):.3f}\n"
             f"Sample size (n) = {n}\n"
         )
 
@@ -378,7 +378,7 @@ def model_evaluations(directory_path):
     reviews["theme_group"] = reviews.apply(classify_theme, axis=1)
 
     theme_sentiment = reviews.groupby("theme_group")["roberta_compound"].mean()
-    theme_sentiment.to_csv(os.path.join(directory_path, "/Statistical_Analysis/theme_sentiment.csv"))
+    theme_sentiment.to_csv(os.path.join(directory_path, "Statistical_Analysis/theme_sentiment.csv"))
 
     plt.figure()
     reviews.boxplot(column="roberta_compound", by="theme_group")
@@ -387,7 +387,7 @@ def model_evaluations(directory_path):
     plt.ylabel("Sentiment Score")
     plt.tight_layout()
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/sentiment_by_theme.png"),
+        os.path.join(directory_path, "Statistical_Analysis/sentiment_by_theme.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -410,7 +410,7 @@ def model_evaluations(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/themes_over_time.png"),
+        os.path.join(directory_path, "Statistical_Analysis/themes_over_time.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -432,7 +432,7 @@ def model_evaluations(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        os.path.join(directory_path, "/Statistical_Analysis/themes_over_time_proportion.png"),
+        os.path.join(directory_path, "Statistical_Analysis/themes_over_time_proportion.png"),
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -448,5 +448,5 @@ def model_evaluations(directory_path):
 
     model = sm.OLS(y, X).fit()
     # Save results
-    with open(os.path.join(directory_path, "/Statistical_Analysis/ols_theme_sentiment.txt"), "w") as f:
+    with open(os.path.join(directory_path, "Statistical_Analysis/ols_theme_sentiment.txt"), "w") as f:
         f.write(model.summary().as_text())

@@ -92,7 +92,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "/RoBERTa/review_sentiment_by_month.png", 
+        directory_path + "RoBERTa/review_sentiment_by_month.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -111,7 +111,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "/RoBERTa/review_sentiment_by_year.png", 
+        directory_path + "RoBERTa/review_sentiment_by_year.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -138,7 +138,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "/RoBERTa/compound_density.png", 
+        directory_path + "RoBERTa/compound_density.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -163,7 +163,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "/RoBERTa/sentiment_by_star_rating_boxplot.png", 
+        directory_path + "RoBERTa/sentiment_by_star_rating_boxplot.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -177,8 +177,7 @@ def roberta_analysis(directory_path):
     sns.regplot(
         x="rating", 
         y="roberta_compound", 
-        data=reviews,
-        palette=PALETTE
+        data=reviews
     )
 
     plt.title("Star Rating vs. RoBERTa Sentiment")
@@ -187,7 +186,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "/RoBERTa/rating_vs_sentiment_regression.png", 
+        directory_path + "RoBERTa/rating_vs_sentiment_regression.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
