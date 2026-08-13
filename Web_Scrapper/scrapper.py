@@ -139,5 +139,4 @@ def scrape_reviews(directory_path, NUM_PAGES, URL):
     # Close the browser
     driver.quit()
 
-    write_to_file(all_reviews, OUTPUT_FILE)
     print("[Scrapper]: Scrapping complete.")
