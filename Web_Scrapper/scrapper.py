@@ -95,9 +95,6 @@ def scrape_reviews(directory_path, NUM_PAGES, URL):
     driver = webdriver.Firefox()
     driver.get(URL)
     page_filter(driver)
-    
-    with open(OUTPUT_FILE, "w"):
-        pass
 
     # Wait for page to load
     time.sleep(TIME_SLEEP)
@@ -105,14 +102,39 @@ def scrape_reviews(directory_path, NUM_PAGES, URL):
     all_reviews = []
 
     for page in range(math.ceil(NUM_PAGES / 30)):
-        reviews = scrape_page(driver)
-        all_reviews.extend(reviews)
+        try:
+            reviews = scrape_page(driver)
 
-        if (page + 1) % 10 == 0:
+            print(
+                f"[Scrapper]: Page {page + 1} "
+                f"returned {len(reviews)} reviews."
+            )
+
+            all_reviews.extend(reviews)
+
+            print(
+                f"[Scrapper]: Total reviews collected: "
+                f"{len(all_reviews)}"
+            )
+
             write_to_file(all_reviews, OUTPUT_FILE)
 
-        load_next_page(driver)
-        time.sleep(TIME_SLEEP)
+            load_next_page(driver)
+            time.sleep(TIME_SLEEP)
+
+        except Exception as e:
+            print(
+                f"[Scrapper]: ERROR on page {page + 1}: {e}"
+            )
+
+            write_to_file(all_reviews, OUTPUT_FILE)
+
+            print(
+                f"[Scrapper]: Saved {len(all_reviews)} reviews "
+                f"before crash."
+            )
+
+            raise
     
     # Close the browser
     driver.quit()
