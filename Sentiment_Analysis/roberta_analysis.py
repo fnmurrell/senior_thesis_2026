@@ -12,6 +12,8 @@ def roberta_analysis(directory_path):
     print("\n[RoBERTa]: Read in Goodreads reviews after VADER sentiment analysis.")
     reviews = pd.read_json(directory_path + "VADER_reviews.json")
 
+    output_dir = directory_path + "/RoBERTa/"
+
     MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment"
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
@@ -92,7 +94,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "RoBERTa/review_sentiment_by_month.png", 
+        output_dir + "review_sent_by_month.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -111,7 +113,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "RoBERTa/review_sentiment_by_year.png", 
+        output_dir + "review_sent_by_year.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -138,7 +140,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "RoBERTa/compound_density.png", 
+        output_dir + "compound_density.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -163,7 +165,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "RoBERTa/sentiment_by_star_rating_boxplot.png", 
+        output_dir + "sent_by_rating_boxplot.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -186,7 +188,7 @@ def roberta_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "RoBERTa/rating_vs_sentiment_regression.png", 
+        output_dir + "rating_vs_sent_regression.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300

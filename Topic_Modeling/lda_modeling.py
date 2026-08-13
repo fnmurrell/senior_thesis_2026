@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction import text
@@ -94,7 +93,6 @@ def lda_analyzer(directory_path):
     reviews = pd.read_json(directory_path + "RoBERTa_reviews.json")
 
     output_dir = directory_path + "/LDA/"
-    os.makedirs(output_dir, exist_ok=True)
 
     tf_vectorizer = CountVectorizer(
         max_df=0.80,
@@ -133,9 +131,9 @@ def lda_analyzer(directory_path):
     plt.xlabel("Number of Topics")
     plt.ylabel("UMass Coherence")
     plt.title("LDA Coherence by Topic Count")
-    save_path = os.path.join(output_dir, f"lda_UMass_coherence.png")
+
     plt.savefig(
-        save_path, 
+        output_dir + "UMass_coherence.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -176,7 +174,7 @@ def lda_analyzer(directory_path):
         plt.ylabel("UMass Coherence")
         plt.title(f"LDA Coherence Progression (k={k})")
 
-        save_path = os.path.join(output_dir, f"lda_convergence_k_{k}.png")
+        save_path = output_dir + f"convergence_k_{k}.png"
         plt.savefig(
             save_path, 
             bbox_inches="tight", 
@@ -214,7 +212,7 @@ def lda_analyzer(directory_path):
 
         fig.tight_layout()
 
-        save_path = os.path.join(output_dir, f"lda_topic_{topic_idx+1}.png")
+        save_path = output_dir + f"topic_{topic_idx+1}.png"
         plt.savefig(
             save_path, 
             bbox_inches="tight", 
@@ -250,9 +248,9 @@ def lda_analyzer(directory_path):
             excerpt = row["lemmatized_string"][:300]
             print(f"- {excerpt}...")
     
-    excerpt_path = os.path.join(output_dir, "LDA_topic_representative_reviews.txt")
+    output_path = output_dir, "topic_representative_reviews.txt"
 
-    with open(excerpt_path, "w") as f:
+    with open(output_path, "w") as f:
         for topic in range(best_k):
             topic_reviews = reviews[reviews["lda_topic"] == topic]
 
@@ -285,9 +283,8 @@ def lda_analyzer(directory_path):
     plt.title("LDA Topic Proportions")
     plt.xticks(topic_table["Topic"])
 
-    save_path = os.path.join(output_dir, "lda_topic_proportions.png")
     plt.savefig(
-        save_path, 
+        output_dir + "topic_proportions.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300

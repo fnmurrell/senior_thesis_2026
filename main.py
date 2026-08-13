@@ -18,7 +18,7 @@ import os
 
 def main():
     # Create directory
-    directory_path = "data/ColdestGirl_HollyBlack/"
+    directory_path = "data/booktitle/"
 
     # Scrape The Web
     if(not os.path.exists(directory_path + "goodreads_reviews.json")):

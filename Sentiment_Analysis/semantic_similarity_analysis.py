@@ -54,7 +54,7 @@ def tf_idf_analyzer(directory_path):
     table.auto_set_column_width(col=list(range(len(top_10.columns))))
 
     plt.savefig(
-        directory_path + "Sentiment_Comparison/tfidf_top10_similarity.png",
+        directory_path + "Sentiment_Analysis/tfidf_top10_similarity.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300

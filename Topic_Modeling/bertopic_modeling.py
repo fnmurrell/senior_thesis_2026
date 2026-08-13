@@ -199,18 +199,20 @@ def bertopic_analyzer(directory_path):
     topic_counts = valid_reviews["bert_topic"].value_counts().sort_index()
     topic_proportions = topic_counts / len(valid_reviews)
 
+    output_dir = directory_path + "/BERTopic/"
+
     # Visualize 2D image of topics
     fig = topic_model.visualize_topics()
-    fig.write_html(directory_path + "BERTopic/map.html")
+    fig.write_html(output_dir + "topic_map.html")
 
     # Visualize a barchart of selected topics
     fig = topic_model.visualize_barchart()
-    fig.write_html(directory_path + "BERTopic/barchart.html")
+    fig.write_html(output_dir + "topic_barchart.html")
 
     # Visualize the topics over time
     topics_over_time = topic_model.topics_over_time(docs, dates, nr_bins=50)
     fig = topic_model.visualize_topics_over_time(topics_over_time)
-    fig.write_html(directory_path + "BERTopic/timeline.html")
+    fig.write_html(output_dir + "topic_timeline.html")
 
     # Generate bar chart for topic proportions
     topic_table = pd.DataFrame({
@@ -227,7 +229,7 @@ def bertopic_analyzer(directory_path):
     plt.xticks(topic_table["Topic"])
 
     plt.savefig(
-        directory_path + "BERTopic/topic_proportions.png", 
+        output_dir + "topic_proportions.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -254,7 +256,7 @@ def bertopic_analyzer(directory_path):
         plt.axis("off")
         plt.title(f"BERTopic Topic {topic}")
 
-        save_path = directory_path + f"BERTopic/topic_{topic}.png"
+        save_path = output_dir + f"topic_{topic}.png"
         plt.savefig(
             save_path, 
             bbox_inches="tight", 
@@ -272,7 +274,7 @@ def bertopic_analyzer(directory_path):
         reviews["bert_prob"] = 0
 
     top_n = 5
-    output_path = directory_path + "BERTopic/topic_representative_reviews.txt"
+    output_path = output_dir + "topic_representative_reviews.txt"
 
     with open(output_path, "w") as f:
         for topic in sorted(set(topics)):

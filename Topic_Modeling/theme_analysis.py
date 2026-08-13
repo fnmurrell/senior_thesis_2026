@@ -32,6 +32,8 @@ def theme_analyzer(directory_path, main_themes):
     ]
 
     plt.rcParams['axes.prop_cycle'] = cycler(color=PALETTE)
+    
+    output_dir = directory_path + "/Topic_Analysis/"
 
     # Generate bar chart
     print("\n[Theme Analysis]: Generate bar chart.")
@@ -53,7 +55,7 @@ def theme_analyzer(directory_path, main_themes):
     plt.title("Theme Frequency in Goodreads Reviews")
     
     plt.savefig(
-        directory_path + "Topic_Modeling/theme_frequency_chart.png",
+        output_dir + "theme_frequency_chart.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300
@@ -74,7 +76,7 @@ def theme_analyzer(directory_path, main_themes):
     plt.title("Theme Frequency Word Cloud")
 
     plt.savefig(
-        directory_path + "Topic_Modeling/theme_frequency_wordcloud.png",
+        output_dir + "theme_frequency_wordcloud.png",
         bbox_inches="tight",
         pad_inches=0.5,
         dpi=300

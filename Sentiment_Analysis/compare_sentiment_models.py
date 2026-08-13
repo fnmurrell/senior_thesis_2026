@@ -10,6 +10,8 @@ def sentiment_comparison(directory_path):
     print("\n[Sentiment Comparison]: Read in dataset with star ratings and sentiment scores from VADER and RoBERTa models.")
     reviews = pd.read_json(directory_path + "RoBERTa_reviews.json")
 
+    output_dir = directory_path + "/Sentiment_Analysis/"
+
     # Define colors
     PALETTE = [
         "#ffd700", #gold
@@ -39,7 +41,7 @@ def sentiment_comparison(directory_path):
 
     g.fig.suptitle("VADER vs RoBERTa Compound Scores", y=1.02)
     g.fig.savefig(
-        directory_path + "Sentiment_Comparison/sentiment_jointplot.png", 
+        output_dir + "sentcomp_jointplot.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -70,7 +72,7 @@ def sentiment_comparison(directory_path):
     plt.title("VADER vs RoBERTa Label Agreement")
 
     plt.savefig(
-        directory_path + "Sentiment_Comparison/sentiment_heatmap.png", 
+        output_dir + "sentcomp_heatmap.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -88,7 +90,7 @@ def sentiment_comparison(directory_path):
     report_df = pd.DataFrame(report).transpose()
 
     # Save as CSV
-    csv_path = directory_path + "Sentiment_Comparison/classification_report.csv"
+    csv_path = output_dir + "sentcomp_classification_report.csv"
     report_df.round(3).to_csv(csv_path)
 
     # find correlations
@@ -103,7 +105,7 @@ def sentiment_comparison(directory_path):
     })
 
     # Save to CSV
-    csv_path = directory_path + "Sentiment_Comparison/correlation_summary.csv"
+    csv_path = output_dir + "sentcomp_correlation_summary.csv"
     corr_df.round(4).to_csv(csv_path, index=False)
 
     # generate star rating based confusion matrices
@@ -142,7 +144,7 @@ def sentiment_comparison(directory_path):
     plt.title("Star Rating vs RoBERTa Label")
 
     plt.savefig(
-        directory_path + "Sentiment_Comparison/star_roberta_heatmap.png", 
+        output_dir + "sentcomp_star_roberta_heatmap.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -172,7 +174,7 @@ def sentiment_comparison(directory_path):
     plt.title("Star Rating vs VADER Label")
 
     plt.savefig(
-        directory_path + "Sentiment_Comparison/star_vader_heatmap.png", 
+        output_dir + "sentcomp_star_vader_heatmap.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300

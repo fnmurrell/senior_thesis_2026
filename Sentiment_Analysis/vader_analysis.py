@@ -23,6 +23,8 @@ def vader_analysis(directory_path):
     print("\n[VADER]: Read in final Goodreads dataset.")
     reviews = pd.read_json(directory_path + "goodreads_final_reviews.json")
 
+    output_dir = directory_path + "/VADER/"
+
     # feed lemmatized comment to VADER analyzer for sentiment calculations
     print("\n[VADER]: Apply SentimentIntensityAnalyzer to reviews.")
 
@@ -58,7 +60,7 @@ def vader_analysis(directory_path):
     plt.tight_layout() 
 
     plt.savefig(
-        directory_path + "VADER/review_sentiment_by_month.png", 
+        output_dir + "review_sent_by_month.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -77,7 +79,7 @@ def vader_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "VADER/review_sentiment_by_year.png", 
+        output_dir + "review_sent_by_year.png", 
         bbox_inches="tight", 
         pad_inches=0.5,
         dpi=300
@@ -104,7 +106,7 @@ def vader_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "VADER/compound_density.png", 
+        output_dir + "compound_density.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -129,7 +131,7 @@ def vader_analysis(directory_path):
     plt.tight_layout()
 
     plt.savefig(
-        directory_path + "VADER/sentiment_by_star_rating_boxplot.png", 
+        output_dir + "sent_by_rating_boxplot.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
@@ -152,7 +154,7 @@ def vader_analysis(directory_path):
     plt.tight_layout()
     
     plt.savefig(
-        directory_path + "VADER/rating_vs_sentiment_regression.png", 
+        output_dir + "rating_vs_sent_regression.png", 
         bbox_inches="tight", 
         pad_inches=0.5, 
         dpi=300
