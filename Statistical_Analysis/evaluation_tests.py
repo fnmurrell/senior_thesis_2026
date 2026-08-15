@@ -14,7 +14,7 @@ def model_evaluations(directory_path):
     print("\n[Topic Comparison]: Read in final Goodreads dataset.")
     reviews = pd.read_json(directory_path + "BERTopic_reviews.json")
 
-    output_dir = directory_path + "/Statistical_Analysis/"
+    output_dir = directory_path + "Statistical_Analysis/"
 
     # Prepare all features for evaluation
     reviews["high_rating"] = (reviews["rating"] >= 4).astype(int)

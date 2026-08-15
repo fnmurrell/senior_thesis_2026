@@ -92,7 +92,7 @@ def lda_analyzer(directory_path):
     print("\n[LDA]: Read in final Goodreads dataset.")
     reviews = pd.read_json(directory_path + "RoBERTa_reviews.json")
 
-    output_dir = directory_path + "/LDA/"
+    output_dir = directory_path + "LDA/"
 
     tf_vectorizer = CountVectorizer(
         max_df=0.80,

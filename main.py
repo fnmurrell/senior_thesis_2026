@@ -66,7 +66,7 @@ def main():
     tf_idf_analyzer(directory_path)
 
     # Identify frequency of predefined keywords and themes in dataset 
-    main_themes = input("Enter a list of themes you want to analyze in reviews, separated by commas: ")
+    main_themes = input("Enter a list of themes you want to analyze in reviews, separated by commas: \n")
     main_themes = [theme.strip() for theme in main_themes.split(",")]
 
     theme_analyzer(directory_path, main_themes)

@@ -14,13 +14,13 @@ def eda_processor(directory_path):
 
     # Define colors
     PALETTE = [
-        "#ffd700", #gold
         "#0000ff", #indigo
         "#fa8775", #light orange
         "#9d02d7", #magenta
         "#cd34b5", #magenta
         "#ffb14e", #orange
-        "#ea5f94" #pink
+        "#ea5f94", #pink
+        "#ffd700" #gold
     ]
 
     plt.rcParams['axes.prop_cycle'] = cycler(color=PALETTE)

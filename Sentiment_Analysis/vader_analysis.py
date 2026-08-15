@@ -23,7 +23,7 @@ def vader_analysis(directory_path):
     print("\n[VADER]: Read in final Goodreads dataset.")
     reviews = pd.read_json(directory_path + "goodreads_final_reviews.json")
 
-    output_dir = directory_path + "/VADER/"
+    output_dir = directory_path + "VADER/"
 
     # feed lemmatized comment to VADER analyzer for sentiment calculations
     print("\n[VADER]: Apply SentimentIntensityAnalyzer to reviews.")
@@ -34,14 +34,15 @@ def vader_analysis(directory_path):
         )
 
     # VADER data visualizations
+    # Define colors
     PALETTE = [
-        "#ffd700", #gold
         "#0000ff", #indigo
         "#fa8775", #light orange
         "#9d02d7", #magenta
         "#cd34b5", #magenta
         "#ffb14e", #orange
-        "#ea5f94" #pink
+        "#ea5f94", #pink
+        "#ffd700" #gold
     ]
 
     plt.rcParams['axes.prop_cycle'] = cycler(color=PALETTE)

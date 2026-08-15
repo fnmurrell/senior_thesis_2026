@@ -199,7 +199,7 @@ def bertopic_analyzer(directory_path):
     topic_counts = valid_reviews["bert_topic"].value_counts().sort_index()
     topic_proportions = topic_counts / len(valid_reviews)
 
-    output_dir = directory_path + "/BERTopic/"
+    output_dir = directory_path + "BERTopic/"
 
     # Visualize 2D image of topics
     fig = topic_model.visualize_topics()
